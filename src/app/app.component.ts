@@ -2237,7 +2237,7 @@ export class CDCApp {
       [
         Component({
           template: './app.component.html',
-          selector: 'my-app',
+          selector: 'app-root',
           styles: ['./app.component.css'],
           providers: [ProductService],
           animations: [
