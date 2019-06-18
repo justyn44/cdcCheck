@@ -1,0 +1,73 @@
+import { BrowserModule } from '@angular/platform-browser';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  Renderer,
+  SkipSelf,
+  NgModule,
+  NgModuleFactoryLoader
+} from '@angular/core';
+import { CDCApp } from './app.component';
+import { FormsModule } from '@angular/forms';
+import { Headers, RequestOptions, Http, HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { OwlModule } from 'ngx-owl-carousel';
+import { CarouselModule } from 'ngx-carousels';
+import { __decorate, __metadata } from 'tslib';
+import 'reflect-metadata';
+import { ImageUploadModule } from 'angular2-image-upload';
+import { categorySlider } from './categorySlider';
+import { productStylesSlider } from './product-styles-slider.component';
+import { productOptionsSlider } from './product-options-slider.component';
+import { DaliDraggable } from './directives/draggable.directive';
+import { optionsCategoriesSlider } from './options-categories-slider.component';
+import { wallChangeLeft } from './wall-change-left.component';
+import { wallChangeRight } from './wall-change-right.component';
+import { CanvasInteractionDirective } from './directives/canvasinteraction.directive';
+import { MatCardModule } from '@angular/material/card';
+import { HttpClientModule } from '@angular/common/http';
+import 'rxjs-compat';
+
+
+// tslint:disable
+@NgModule({
+  declarations: [CDCApp],
+  imports: [BrowserModule, FormsModule],
+  providers: [],
+  bootstrap: [CDCApp]
+})
+export class AppModule {
+  AppModule = (function() {
+    function AppModule() {}
+    AppModule = __decorate(
+      NgModule({
+        imports: [
+          BrowserModule,
+          BrowserAnimationsModule,
+          MatCardModule,
+          FormsModule,
+          HttpModule,
+          HttpClientModule,
+          OwlModule,
+          CarouselModule,
+          ImageUploadModule.forRoot()
+        ],
+        declarations: [CDCApp],
+        categorySlider,
+        productStylesSlider,
+        productOptionsSlider,
+        DaliDraggable,
+        optionsCategoriesSlider,
+        wallChangeLeft,
+        wallChangeRight,
+        CanvasInteractionDirective,
+        bootstrap: [CDCApp],
+        providers: [CarouselModule],
+
+      }),
+      AppModule
+    );
+    return AppModule;
+  })();
+}

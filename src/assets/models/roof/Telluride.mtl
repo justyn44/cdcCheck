@@ -1,0 +1,30 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 24.09.2018 08:33:14
+
+newmtl shingles
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Summer Wood 3D\Complete Designs\Telluride\shingles.jpg
+	map_Kd D:\Summer Wood 3D\Complete Designs\Telluride\shingles.jpg
+
+newmtl wood_h
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Summer Wood 3D\Complete Designs\Telluride\wood_side_horizontal.jpg
+	map_Kd D:\Summer Wood 3D\Complete Designs\Telluride\wood_side_horizontal.jpg
