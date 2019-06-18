@@ -53,40 +53,7 @@ import { ProductService } from './product.service';
 
 NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-})
-
-Component({
-  template: './app.component.html',
-  selector: 'my-app',
-  styles: ['./app.component.css'],
-  providers: [ProductService],
-  animations: [
-    trigger('stylesDrawertrigger', [
-      state('inactive', style({ transform: 'translateY(19vh)' })),
-      state('active', style({ transform: 'translateY(0)' })),
-      transition('inactive => active', animate('100ms ease-in')),
-      transition('active => inactive', animate('100ms ease-out'))
-    ]),
-    trigger('optionsDrawertrigger', [
-      state('inactive', style({ left: '-25%' })),
-      state('active', style({ left: '15%' })),
-      transition('inactive => active', animate('400ms ease-in')),
-      transition('active => inactive', animate('400ms ease-out'))
-    ]),
-    trigger('sidingsDrawertrigger', [
-      state('inactive', style({ left: '-25%' })),
-      state('active', style({ left: '15%' })),
-      transition('inactive => active', animate('400ms ease-in')),
-      transition('active => inactive', animate('400ms ease-out'))
-    ]),
-    trigger('trimDrawertrigger', [
-      state('inactive', style({ left: '-25%' })),
-      state('active', style({ left: '15%' })),
-      transition('inactive => active', animate('400ms ease-in')),
-      transition('active => inactive', animate('400ms ease-out'))
-    ])
-  ]
-})
+});
 
 var __decorate =
   (this && this.__decorate) ||
@@ -2266,44 +2233,44 @@ export class CDCApp {
       'elementRef',
       void 0
     );
-    // CDCApp = __decorate(
-    //   [
-    //     Component({
-    //       template: '/src/app/app.component.html',
-    //       selector: 'my-app',
-    //       styles: ['/src/app/app.component.css'],
-    //       providers: [ProductService],
-    //       animations: [
-    //         trigger('stylesDrawertrigger', [
-    //           state('inactive', style({ transform: 'translateY(19vh)' })),
-    //           state('active', style({ transform: 'translateY(0)' })),
-    //           transition('inactive => active', animate('100ms ease-in')),
-    //           transition('active => inactive', animate('100ms ease-out'))
-    //         ]),
-    //         trigger('optionsDrawertrigger', [
-    //           state('inactive', style({ left: '-25%' })),
-    //           state('active', style({ left: '15%' })),
-    //           transition('inactive => active', animate('400ms ease-in')),
-    //           transition('active => inactive', animate('400ms ease-out'))
-    //         ]),
-    //         trigger('sidingsDrawertrigger', [
-    //           state('inactive', style({ left: '-25%' })),
-    //           state('active', style({ left: '15%' })),
-    //           transition('inactive => active', animate('400ms ease-in')),
-    //           transition('active => inactive', animate('400ms ease-out'))
-    //         ]),
-    //         trigger('trimDrawertrigger', [
-    //           state('inactive', style({ left: '-25%' })),
-    //           state('active', style({ left: '15%' })),
-    //           transition('inactive => active', animate('400ms ease-in')),
-    //           transition('active => inactive', animate('400ms ease-out'))
-    //         ])
-    //       ]
-    //     }),
-    //     __metadata('design:paramtypes', ProductService, UtilitiesService, Http)
-    //   ],
-    //   CDCApp
-    // );
-    // return CDCApp;
+    CDCApp = __decorate(
+      [
+        Component({
+          template: './app.component.html',
+          selector: 'my-app',
+          styles: ['./app.component.css'],
+          providers: [ProductService],
+          animations: [
+            trigger('stylesDrawertrigger', [
+              state('inactive', style({ transform: 'translateY(19vh)' })),
+              state('active', style({ transform: 'translateY(0)' })),
+              transition('inactive => active', animate('100ms ease-in')),
+              transition('active => inactive', animate('100ms ease-out'))
+            ]),
+            trigger('optionsDrawertrigger', [
+              state('inactive', style({ left: '-25%' })),
+              state('active', style({ left: '15%' })),
+              transition('inactive => active', animate('400ms ease-in')),
+              transition('active => inactive', animate('400ms ease-out'))
+            ]),
+            trigger('sidingsDrawertrigger', [
+              state('inactive', style({ left: '-25%' })),
+              state('active', style({ left: '15%' })),
+              transition('inactive => active', animate('400ms ease-in')),
+              transition('active => inactive', animate('400ms ease-out'))
+            ]),
+            trigger('trimDrawertrigger', [
+              state('inactive', style({ left: '-25%' })),
+              state('active', style({ left: '15%' })),
+              transition('inactive => active', animate('400ms ease-in')),
+              transition('active => inactive', animate('400ms ease-out'))
+            ])
+          ]
+        }),
+        __metadata('design:paramtypes', ProductService, UtilitiesService, Http)
+      ],
+      CDCApp
+    );
+    return CDCApp;
   })();
 }
