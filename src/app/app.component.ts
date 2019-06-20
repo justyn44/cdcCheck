@@ -12,7 +12,7 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Headers, RequestOptions, Http } from '@angular/http';
 import * as THREE from 'three-full';
 // const OrbitControls = require('three-orbitcontrols-ts')(THREE);
@@ -53,8 +53,8 @@ import { ProductService } from './product.service';
 // tslint:disable
 
 NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
-});
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+})
 
 var __decorate =
   (this && this.__decorate) ||
@@ -86,11 +86,11 @@ var __metadata =
     }
   };
 
-export class CDCApp {
+export class AppComponent {
   @ViewChild('rendererContainer', { static: false })
   rendererContainer: ElementRef;
-  CDCApp = (function() {
-    function CDCApp(_prodServ, _utils, http, __decorate) {
+  AppComponent = (function() {
+    function AppComponent(_prodServ, _utils, http, __decorate) {
       this._prodServ = _prodServ;
       this._utils = _utils;
       this.http = http;
@@ -203,7 +203,7 @@ export class CDCApp {
       this.background_top = 0;
       this.wallBounds = [];
     }
-    CDCApp.prototype.ngOnInit = function() {
+    AppComponent.prototype.ngOnInit = function() {
       var _this = this;
       this.catSelect = 'pool-cabanas';
       this.wallSizes = this._prodServ.getSizes();
@@ -243,7 +243,7 @@ export class CDCApp {
     };
 
     // Load in new buildings
-    CDCApp.prototype.loadNewBuilding = function() {
+    AppComponent.prototype.loadNewBuilding = function() {
       var _this = this;
       var building = this.configSelect.style.dwStyle.split('x');
       this.configSelect.width = Number(building[1]);
@@ -287,7 +287,7 @@ export class CDCApp {
         }
       );
     };
-    CDCApp.prototype.loadBasicStructure = function() {
+    AppComponent.prototype.loadBasicStructure = function() {
       console.log('Now loading the basic structure');
       var specialConfigurations = ['Catalina'];
       var self = this;
@@ -328,7 +328,7 @@ export class CDCApp {
         return promise;
       }
     };
-    CDCApp.prototype.loadBasicStructureCatalina = function() {
+    AppComponent.prototype.loadBasicStructureCatalina = function() {
       var self = this;
       console.log('Style: Catalina', self.selectStyle);
       var promise = new Promise(function(resolve, reject) {
@@ -375,7 +375,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.calculateWallPosition = function(side) {
+    AppComponent.prototype.calculateWallPosition = function(side) {
       var extraHeight = 0;
       if (this.roofIsFlat()) {
         extraHeight = this.calculateActualRoofHeight() / 12;
@@ -409,7 +409,7 @@ export class CDCApp {
       }
       return position;
     };
-    CDCApp.prototype.loadWall = function(name, filename, position, rotation) {
+    AppComponent.prototype.loadWall = function(name, filename, position, rotation) {
       var self = this;
       var manager = new THREE.LoadingManager();
       var loader = new OBJLoader(manager);
@@ -455,7 +455,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.loadAccessories = function() {
+    AppComponent.prototype.loadAccessories = function() {
       console.log('Now loading accessories');
       var self = this;
       var filename = 'table';
@@ -495,7 +495,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.loadRoof = function() {
+    AppComponent.prototype.loadRoof = function() {
       var self = this;
       var filename = this.configSelect.style.nameStyle;
       var promise = new Promise(function(resolve, rejcet) {
@@ -559,7 +559,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.calculateActualRoofHeight = function() {
+    AppComponent.prototype.calculateActualRoofHeight = function() {
       var self = this;
       var deg2rad = Math.PI / 180;
       var actualWidth = self.calculateActualWidth();
@@ -569,7 +569,7 @@ export class CDCApp {
       actualWidth = Math.abs(actualHeight);
       return actualHeight;
     };
-    CDCApp.prototype.calculateActualDepth = function() {
+    AppComponent.prototype.calculateActualDepth = function() {
       var self = this;
       var roofTypeMultiplier = 1;
       if (
@@ -590,7 +590,7 @@ export class CDCApp {
       }
       return actualDepth;
     };
-    CDCApp.prototype.calculateActualWidth = function() {
+    AppComponent.prototype.calculateActualWidth = function() {
       var self = this;
       var actualWidth;
       if (self.selectStyle.$.name === 'Catalina') {
@@ -604,7 +604,7 @@ export class CDCApp {
       }
       return actualWidth;
     };
-    CDCApp.prototype.loadWallMask = function(position, objSize) {
+    AppComponent.prototype.loadWallMask = function(position, objSize) {
       var self = this;
       var objLoader = new OBJLoader();
       objLoader.setPath('../assets/models/wallmasks/');
@@ -638,7 +638,7 @@ export class CDCApp {
         self.onError
       );
     };
-    CDCApp.prototype.loadStyleBasicOptions = function() {
+    AppComponent.prototype.loadStyleBasicOptions = function() {
       var _this = this;
       if (this.configSelect.side1.dormer) {
         if (this.configSelect.side1.dormer.length) {
@@ -673,7 +673,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.loadStyleBasicOptionsFromSide = function(side) {
+    AppComponent.prototype.loadStyleBasicOptionsFromSide = function(side) {
       side++;
       var self = this;
       var buildingOptions = [];
@@ -774,7 +774,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.getElementAccessories = function(
+    AppComponent.prototype.getElementAccessories = function(
       sideNo,
       accType,
       position
@@ -793,7 +793,7 @@ export class CDCApp {
         }
       }
     };
-    CDCApp.prototype.loadNewBuildingWindowShutters = function(
+    AppComponent.prototype.loadNewBuildingWindowShutters = function(
       targetObject,
       ordercode
     ) {
@@ -841,7 +841,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.loadNewBuildingWindowFlowerbox = function(
+    AppComponent.prototype.loadNewBuildingWindowFlowerbox = function(
       targetObject,
       ordercode
     ) {
@@ -865,13 +865,13 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.onProgress = function(xhr) {
+    AppComponent.prototype.onProgress = function(xhr) {
       this.comparePercentage = Math.round((xhr.loaded / xhr.total) * 100);
     };
-    CDCApp.prototype.onError = function(xhr) {
+    AppComponent.prototype.onError = function(xhr) {
       console.log('There was an error', xhr);
     };
-    CDCApp.prototype.loadTerraceOption = function() {
+    AppComponent.prototype.loadTerraceOption = function() {
       console.log('Now loading terrace');
       var self = this;
       var firstWall = self.scene.getObjectByName('wall-0');
@@ -901,7 +901,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.loadGlenEchoAccessory = function() {
+    AppComponent.prototype.loadGlenEchoAccessory = function() {
       console.log('Now loading Glen Echo Accessory');
       var self = this;
       var firstWall = self.scene.getObjectByName('wall-0');
@@ -942,7 +942,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.loadWindsorColumns = function() {
+    AppComponent.prototype.loadWindsorColumns = function() {
       console.log('Now loading Windsor Columns');
       var self = this;
       var firstWall = self.scene.getObjectByName('wall-0');
@@ -1011,7 +1011,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.calculateSpaceOpccupiedByOptions = function(options) {
+    AppComponent.prototype.calculateSpaceOpccupiedByOptions = function(options) {
       var self = this;
       var promise = new Promise(function(resolve, reject) {
         var totalWidth = 0;
@@ -1022,7 +1022,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.roofIsFlat = function() {
+    AppComponent.prototype.roofIsFlat = function() {
       var res = false;
       if (
         this.selectStyle.$.name === 'Bar Harbor' ||
@@ -1033,7 +1033,7 @@ export class CDCApp {
       }
       return res;
     };
-    CDCApp.prototype.dragObject = function(event) {
+    AppComponent.prototype.dragObject = function(event) {
       var localMouse = new THREE.Vector2();
       localMouse.x =
         (event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
@@ -1048,8 +1048,8 @@ export class CDCApp {
       var parentSize = this.objectSize(parent);
       this.tmp = intersects[0].point.x;
     };
-    CDCApp.prototype.onCanvasMouseMove = function(event) {};
-    CDCApp.prototype.onCanvasClickDown = function(event) {
+    AppComponent.prototype.onCanvasMouseMove = function(event) {};
+    AppComponent.prototype.onCanvasClickDown = function(event) {
       var self = this;
       this.mouse = event;
       var intersects;
@@ -1079,7 +1079,7 @@ export class CDCApp {
         this.draggingStartedAt = null;
       }
     };
-    CDCApp.prototype.onCanvasClickUp = function(event) {
+    AppComponent.prototype.onCanvasClickUp = function(event) {
       this.controls.enabled = true;
       if (this.selectedObjectColidesWithOthers()) {
         this.selectedElement.position.x = this.draggingStartedAt.x;
@@ -1087,7 +1087,7 @@ export class CDCApp {
       }
       this.draggingStartedAt = null;
     };
-    CDCApp.prototype.isWithinBoundsOf = function(object, target) {
+    AppComponent.prototype.isWithinBoundsOf = function(object, target) {
       var res = false;
       var objectBox = new THREE.Box3().setFromObject(object);
       var targetBox = new THREE.Box3().setFromObject(target);
@@ -1098,7 +1098,7 @@ export class CDCApp {
         res = true;
       }
     };
-    CDCApp.prototype.selectedObjectColidesWithOthers = function() {
+    AppComponent.prototype.selectedObjectColidesWithOthers = function() {
       var collisionDetected = null;
       if (!this.selectedElement) {
         return null;
@@ -1122,10 +1122,10 @@ export class CDCApp {
       });
       return collisionDetected;
     };
-    CDCApp.prototype.startDraggingOption = function($event, option) {
+    AppComponent.prototype.startDraggingOption = function($event, option) {
       this.draggedObject = option;
     };
-    CDCApp.prototype.highlightTargets = function(option) {
+    AppComponent.prototype.highlightTargets = function(option) {
       var _this = this;
       var targets = [];
       var target;
@@ -1154,7 +1154,7 @@ export class CDCApp {
         }
       }
     };
-    CDCApp.prototype.highlightObject = function(target) {
+    AppComponent.prototype.highlightObject = function(target) {
       var outlineMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         side: BackSide,
@@ -1171,13 +1171,13 @@ export class CDCApp {
       target.parent.add(highlight);
       return highlight;
     };
-    CDCApp.prototype.removeHighlights = function() {
+    AppComponent.prototype.removeHighlights = function() {
       this.highlights.forEach(function(h) {
         h.parent.remove(h);
       });
       this.highlights = [];
     };
-    CDCApp.prototype.getAllObjectsWithName = function(name, parent) {
+    AppComponent.prototype.getAllObjectsWithName = function(name, parent) {
       console.log('The parent is: ', parent);
       var res = [];
       parent.children.forEach(function(ch) {
@@ -1190,7 +1190,7 @@ export class CDCApp {
       });
       return res;
     };
-    CDCApp.prototype.droppedOption = function($event, dragData) {
+    AppComponent.prototype.droppedOption = function($event, dragData) {
       var self = this;
       var localMouse = new THREE.Vector2();
       localMouse.x =
@@ -1235,7 +1235,7 @@ export class CDCApp {
         this.loadDroppedOption($event, dragData, this.scale);
       }
     };
-    CDCApp.prototype.loadDroppedOption = function(
+    AppComponent.prototype.loadDroppedOption = function(
       $event,
       object,
       targetObject
@@ -1286,10 +1286,10 @@ export class CDCApp {
         }
       );
     };
-    CDCApp.prototype.allowDrop = function(event) {
+    AppComponent.prototype.allowDrop = function(event) {
       event.preventDefault();
     };
-    CDCApp.prototype.init3DScene = function() {
+    AppComponent.prototype.init3DScene = function() {
       var view = {
         angle: 45,
         aspect: screen.width / screen.height,
@@ -1378,7 +1378,7 @@ export class CDCApp {
       this.controls.maxPolarAngle = Math.PI / 2;
       this.render();
     };
-    CDCApp.prototype.createGround = function() {
+    AppComponent.prototype.createGround = function() {
       var texture = new THREE.TextureLoader().load(
         '../assets/textures/grass.jpg'
       );
@@ -1396,11 +1396,11 @@ export class CDCApp {
       console.log('The position of the ground is ' + ground.position.y);
       this.scene.add(ground);
     };
-    CDCApp.prototype.createMaterials = function() {
+    AppComponent.prototype.createMaterials = function() {
       this.createMaterialCedarSiding();
       this.createMaterialCedarElement();
     };
-    CDCApp.prototype.createMaterialCedarSiding = function() {
+    AppComponent.prototype.createMaterialCedarSiding = function() {
       var texture = new THREE.TextureLoader().load(
         '../assets/textures/cedar3.jpg'
       );
@@ -1412,7 +1412,7 @@ export class CDCApp {
         reflectivity: 0.1
       });
     };
-    CDCApp.prototype.createMaterialCedarElement = function() {
+    AppComponent.prototype.createMaterialCedarElement = function() {
       var texture = new THREE.TextureLoader().load(
         '../assets/textures/cedar-element.jpg'
       );
@@ -1422,7 +1422,7 @@ export class CDCApp {
         reflectivity: 0.1
       });
     };
-    CDCApp.prototype.addCubeMap = function() {
+    AppComponent.prototype.addCubeMap = function() {
       var skyGeometry = new BoxGeometry(1024, 1024, 1024);
       var directions = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'];
       var materialArray = [];
@@ -1445,13 +1445,13 @@ export class CDCApp {
       skyBox.name = 'skybox';
       this.sceneBg.add(skyBox);
     };
-    CDCApp.prototype.changeBackground = function() {
+    AppComponent.prototype.changeBackground = function() {
       console.log('Changing the background: ' + this.currentBG);
       var box = this.scene.getObjectByName('skybox');
       this.sceneBg.remove(box);
       this.addCubeMap();
     };
-    CDCApp.prototype.changeSidingsTexture = function(objectName, newTexture) {
+    AppComponent.prototype.changeSidingsTexture = function(objectName, newTexture) {
       var self = this;
       var _loop_4 = function(i) {
         var textureName = newTexture.order_code;
@@ -1483,7 +1483,7 @@ export class CDCApp {
         _loop_4(i);
       }
     };
-    CDCApp.prototype.changeTrimTexture = function(newTexture) {
+    AppComponent.prototype.changeTrimTexture = function(newTexture) {
       var self = this;
       this.scene.children.forEach(function(child) {
         child.children.forEach(function(el) {
@@ -1503,7 +1503,7 @@ export class CDCApp {
         });
       });
     };
-    CDCApp.prototype.render = function() {
+    AppComponent.prototype.render = function() {
       var self = this;
       (function render() {
         requestAnimationFrame(render);
@@ -1540,7 +1540,7 @@ export class CDCApp {
         }
       })();
     };
-    CDCApp.prototype.addObjectTransparency = function(object) {
+    AppComponent.prototype.addObjectTransparency = function(object) {
       this.selectedElement.children.forEach(function(el) {
         if (el.type === 'Mesh') {
           el.material.transparent = true;
@@ -1548,7 +1548,7 @@ export class CDCApp {
         }
       });
     };
-    CDCApp.prototype.removeObjectTransparency = function(object) {
+    AppComponent.prototype.removeObjectTransparency = function(object) {
       object.children.forEach(function(el) {
         if (el.type === 'Mesh') {
           el.material.transparent = false;
@@ -1556,29 +1556,29 @@ export class CDCApp {
         }
       });
     };
-    CDCApp.prototype.removeSelectedElement = function() {
+    AppComponent.prototype.removeSelectedElement = function() {
       console.log('devaring ', this.selectedElement);
       var parent = this.selectedElement.parent;
       parent.remove(this.selectedElement);
       this.selectedElement = null;
     };
-    CDCApp.prototype.toggleProductStyleStates = function() {
+    AppComponent.prototype.toggleProductStyleStates = function() {
       this.stylesDrawerState =
         this.stylesDrawerState === 'active' ? 'inactive' : 'active';
     };
-    CDCApp.prototype.showSidings = function() {
+    AppComponent.prototype.showSidings = function() {
       this.drawerStateSide = 'active';
     };
-    CDCApp.prototype.closeSidingsDrawer = function() {
+    AppComponent.prototype.closeSidingsDrawer = function() {
       this.drawerStateSide = 'inactive';
     };
-    CDCApp.prototype.showTrim = function() {
+    AppComponent.prototype.showTrim = function() {
       this.drawerStateTrim = 'active';
     };
-    CDCApp.prototype.closeTrimDrawer = function() {
+    AppComponent.prototype.closeTrimDrawer = function() {
       this.drawerStateTrim = 'inactive';
     };
-    CDCApp.prototype.showOptions = function(category) {
+    AppComponent.prototype.showOptions = function(category) {
       var _this = this;
       this.optCatSelect = category;
       this._prodServ.getCategoryOptions(category.id).subscribe(function(res) {
@@ -1595,10 +1595,10 @@ export class CDCApp {
       });
       this.drawerStateOpt = 'active';
     };
-    CDCApp.prototype.closeOptions = function() {
+    AppComponent.prototype.closeOptions = function() {
       this.drawerStateOpt = 'inactive';
     };
-    CDCApp.prototype.loadTwoDormers = function() {
+    AppComponent.prototype.loadTwoDormers = function() {
       var self = this;
       var targetObject = self.roof.getObjectByName('roof');
       var targetPos = targetObject.getWorldPosition();
@@ -1689,7 +1689,7 @@ export class CDCApp {
         });
       });
     };
-    CDCApp.prototype.loadDormerOption = function() {
+    AppComponent.prototype.loadDormerOption = function() {
       var self = this;
       var targetObject = self.roof.getObjectByName('roof');
       var targetPos = targetObject.getWorldPosition();
@@ -1742,7 +1742,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.getCompoundBoundingBox = function(object3D) {
+    AppComponent.prototype.getCompoundBoundingBox = function(object3D) {
       var box = null;
       object3D.traverse(function(obj3D) {
         var geometry = obj3D.geometry;
@@ -1758,7 +1758,7 @@ export class CDCApp {
       });
       return box;
     };
-    CDCApp.prototype.loadWindowOption = function(side, order_code, position) {
+    AppComponent.prototype.loadWindowOption = function(side, order_code, position) {
       var self = this;
       var targetObject = self.scene.getObjectByName('wall-' + side);
       var targetPos = targetObject.getWorldPosition();
@@ -1816,7 +1816,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.calculateWindowPosition = function(
+    AppComponent.prototype.calculateWindowPosition = function(
       side,
       object,
       position,
@@ -1842,7 +1842,7 @@ export class CDCApp {
       }
       return objectPos;
     };
-    CDCApp.prototype.loadFlowerboxOption = function(targetObject, order_code) {
+    AppComponent.prototype.loadFlowerboxOption = function(targetObject, order_code) {
       var self = this;
       var targetPos = targetObject.getWorldPosition();
       var targetSize = self.objectSize(targetObject);
@@ -1874,7 +1874,7 @@ export class CDCApp {
         );
       });
     };
-    CDCApp.prototype.loadRoofingOptions = function() {
+    AppComponent.prototype.loadRoofingOptions = function() {
       var self = this.this.configSelect.general.option.forEach(function(
         option
       ) {
@@ -1915,12 +1915,12 @@ export class CDCApp {
         }
       });
     };
-    CDCApp.prototype.loadShutterOption = function(target, order_code) {
+    AppComponent.prototype.loadShutterOption = function(target, order_code) {
       var self = this;
       var targetObject = self.getAllObjectsWithName('window', target);
       console.log('Shutters Target window', targetObject);
     };
-    CDCApp.prototype.loadDoorOption = function(target, order_code, position) {
+    AppComponent.prototype.loadDoorOption = function(target, order_code, position) {
       var self = this;
       var targetObject = self.scene.getObjectByName(target);
       var targetPos = targetObject.getWorldPosition();
@@ -1971,7 +1971,7 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.calculateDoorPosition = function(
+    AppComponent.prototype.calculateDoorPosition = function(
       object,
       position,
       targetObj
@@ -2001,7 +2001,7 @@ export class CDCApp {
       }
       return objectPos;
     };
-    CDCApp.prototype.objectSize = function(obj) {
+    AppComponent.prototype.objectSize = function(obj) {
       var size = { x: 0, y: 0, z: 0 };
       var xxx = new THREE.Box3().setFromObject(obj);
       size.x = xxx.max.x - xxx.min.x;
@@ -2009,7 +2009,7 @@ export class CDCApp {
       size.z = xxx.max.z - xxx.min.z;
       return size;
     };
-    CDCApp.prototype.objectPosition = function(obj) {
+    AppComponent.prototype.objectPosition = function(obj) {
       var position = { x: 0, y: 0, z: 0 };
       var xxx = new THREE.Box3().setFromObject(obj);
       position.x = xxx.max.x - xxx.min.x;
@@ -2017,7 +2017,7 @@ export class CDCApp {
       position.z = xxx.max.z - xxx.min.z;
       return position;
     };
-    CDCApp.prototype.clearStage = function() {
+    AppComponent.prototype.clearStage = function() {
       var self = this;
       var promise = new Promise(function(resolve, reject) {
         var children = self.scene.children.filter(function(element) {
@@ -2060,10 +2060,10 @@ export class CDCApp {
       });
       return promise;
     };
-    CDCApp.prototype.changeCategory = function(newCategory) {
+    AppComponent.prototype.changeCategory = function(newCategory) {
       this.catSelect = newCategory;
     };
-    CDCApp.prototype.onProductStyleClicked = function(style) {
+    AppComponent.prototype.onProductStyleClicked = function(style) {
       var _this = this;
       this.selectStyle = style;
       if (!Array.isArray(style.overhang)) {
@@ -2087,10 +2087,10 @@ export class CDCApp {
         }
       );
     };
-    CDCApp.prototype.onBaseProductClicked = function(category) {
+    AppComponent.prototype.onBaseProductClicked = function(category) {
       this.catSelect = category;
     };
-    CDCApp.prototype.onProductSizeChanged = function() {
+    AppComponent.prototype.onProductSizeChanged = function() {
       console.log('this.shedSize', this.shedSize);
       var building = this.shedSize.split('x');
       this.configSelect.width = Number(building[1]) * 12;
@@ -2098,12 +2098,12 @@ export class CDCApp {
       this.clearStage();
       this.loadNewBuilding();
     };
-    CDCApp.prototype.setViewport = function() {
+    AppComponent.prototype.setViewport = function() {
       var container = document.getElementById('renderer_container');
       this.viewport.width = container.clientWidth;
       this.viewport.height = window.innerHeight * 0.7;
     };
-    CDCApp.prototype.takeScreenshot = function() {
+    AppComponent.prototype.takeScreenshot = function() {
       var w = window.open('', '');
       w.document.title = 'SummerwoodDesign.png';
       var img = new Image();
@@ -2116,7 +2116,7 @@ export class CDCApp {
       a.download = 'SummerwoodDesign.png';
       a.click();
     };
-    CDCApp.prototype.shareOnFacebook = function() {
+    AppComponent.prototype.shareOnFacebook = function() {
       var img = new Image();
       this.renderer.render(this.scene, this.camera);
       img.src = this.renderer.domElement.toDataURL();
@@ -2140,7 +2140,7 @@ export class CDCApp {
           );
         });
     };
-    CDCApp.prototype.shareOnTwitter = function() {
+    AppComponent.prototype.shareOnTwitter = function() {
       var text = "Come check out what I've made over at https://Summerwood.com";
       var img = new Image();
       this.renderer.render(this.scene, this.camera);
@@ -2167,17 +2167,17 @@ export class CDCApp {
           );
         });
     };
-    CDCApp.prototype.onBackgroundUploadFinished = function(file) {
+    AppComponent.prototype.onBackgroundUploadFinished = function(file) {
       console.log('Image has been uploaded', file.src);
       this.useCustomerBackground(file.src);
     };
-    CDCApp.prototype.onBackgroundRemoved = function(file) {
+    AppComponent.prototype.onBackgroundRemoved = function(file) {
       console.log(file);
     };
-    CDCApp.prototype.onBackgroundUploadStateChanged = function(state) {
+    AppComponent.prototype.onBackgroundUploadStateChanged = function(state) {
       console.log('New file uploaded', state);
     };
-    CDCApp.prototype.useCustomerBackground = function(file) {
+    AppComponent.prototype.useCustomerBackground = function(file) {
       var skyGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
       var box = this.scene.getObjectByName('skybox');
       this.scene.remove(box);
@@ -2207,7 +2207,7 @@ export class CDCApp {
       skyBox.name = 'skybox';
       this.scene.add(skyBox);
     };
-    CDCApp.prototype.useCustomerBackground2 = function(file) {
+    AppComponent.prototype.useCustomerBackground2 = function(file) {
       var skyGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
       var box = this.scene.getObjectByName('skybox');
       this.scene.remove(box);
@@ -2230,11 +2230,11 @@ export class CDCApp {
         ViewChild('container', { static: false }),
         __metadata('design:type', 'ElementRef')
       ],
-      CDCApp.prototype,
+      AppComponent.prototype,
       'elementRef',
       void 0
     );
-    CDCApp = __decorate(
+    AppComponent = __decorate(
       [
         Component({
           template: './app.component.html',
@@ -2270,8 +2270,8 @@ export class CDCApp {
         }),
         __metadata('design:paramtypes', ProductService, UtilitiesService, Http)
       ],
-      CDCApp
+      AppComponent
     );
-    return CDCApp;
+    return AppComponent;
   })();
 }

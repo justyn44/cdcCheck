@@ -15,6 +15,7 @@ import { ProductService } from './product.service';
 import { CarouselModule } from 'ngx-carousels';
 import { __decorate, __metadata } from 'tslib';
 
+
 // tslint:disable
 export class categorySlider {
   categorySlider = (function() {

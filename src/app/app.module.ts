@@ -8,7 +8,7 @@ import {
   NgModule,
   NgModuleFactoryLoader
 } from '@angular/core';
-import { CDCApp } from './app.component';
+// import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { Headers, RequestOptions, Http, HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,10 +33,10 @@ import 'rxjs-compat';
 
 // tslint:disable
 @NgModule({
-  declarations: [CDCApp],
+//  declarations: [AppComponent],
   imports: [BrowserModule, FormsModule],
   providers: [],
-  bootstrap: [CDCApp]
+  bootstrap: [AppComponent]
 })
 @Component({
 
@@ -57,7 +57,7 @@ export class AppModule {
           CarouselModule,
           ImageUploadModule.forRoot()
         ],
-        declarations: [CDCApp],
+        //declarations: [AppComponent],
         categorySlider,
         productStylesSlider,
         productOptionsSlider,
@@ -66,7 +66,7 @@ export class AppModule {
         wallChangeLeft,
         wallChangeRight,
         CanvasInteractionDirective,
-        bootstrap: [CDCApp],
+        bootstrap: [AppComponent],
         providers: [CarouselModule],
 
       }),
