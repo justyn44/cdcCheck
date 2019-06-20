@@ -48,6 +48,7 @@ import { OwlModule } from 'ngx-owl-carousel';
 import { CarouselModule } from 'ngx-carousels';
 import { ImageUploadModule } from 'angular2-image-upload';
 import { ProductService } from './product.service';
+//import { AtftModule } from 'atft';
 
 // tslint:disable
 

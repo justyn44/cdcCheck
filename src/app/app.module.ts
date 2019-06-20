@@ -28,6 +28,7 @@ import { CanvasInteractionDirective } from './directives/canvasinteraction.direc
 import { MatCardModule } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
 import 'rxjs-compat';
+//import { AtftModule } from 'atft';
 
 
 // tslint:disable
@@ -36,6 +37,9 @@ import 'rxjs-compat';
   imports: [BrowserModule, FormsModule],
   providers: [],
   bootstrap: [CDCApp]
+})
+@Component({
+
 })
 export class AppModule {
   AppModule = (function() {
