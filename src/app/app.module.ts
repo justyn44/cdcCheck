@@ -8,14 +8,14 @@ import {
   NgModule,
   NgModuleFactoryLoader
 } from '@angular/core';
-// import { AppComponent } from './app.component';
+import { AppComponent } from './AppComponent';
 import { FormsModule } from '@angular/forms';
 import { Headers, RequestOptions, Http, HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { OwlModule } from 'ngx-owl-carousel';
 import { CarouselModule } from 'ngx-carousels';
 import { __decorate, __metadata } from 'tslib';
-import 'reflect-metadata';
+// import 'reflect-metadata';
 import { ImageUploadModule } from 'angular2-image-upload';
 import { categorySlider } from './categorySlider';
 import { productStylesSlider } from './product-styles-slider.component';
@@ -28,50 +28,36 @@ import { CanvasInteractionDirective } from './directives/canvasinteraction.direc
 import { MatCardModule } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
 import 'rxjs-compat';
-//import { AtftModule } from 'atft';
+// import { AtftModule } from 'atft';
 
 
 // tslint:disable
 @NgModule({
-//  declarations: [AppComponent],
-  imports: [BrowserModule, FormsModule],
-  providers: [],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatCardModule,
+    FormsModule,
+    HttpModule,
+    HttpClientModule,
+    OwlModule,
+    CarouselModule,
+    ImageUploadModule.forRoot(),
+  ],
+  exports: [
+    AppComponent,
+    categorySlider,
+    productStylesSlider,
+    productOptionsSlider,
+    DaliDraggable,
+    optionsCategoriesSlider,
+    wallChangeLeft,
+    wallChangeRight,
+    CanvasInteractionDirective
+  ],
+  providers: [CarouselModule],
+  declarations: [AppComponent],
   bootstrap: [AppComponent]
-})
-@Component({
+  })
 
-})
-export class AppModule {
-  AppModule = (function() {
-    function AppModule() {}
-    AppModule = __decorate(
-      NgModule({
-        imports: [
-          BrowserModule,
-          BrowserAnimationsModule,
-          MatCardModule,
-          FormsModule,
-          HttpModule,
-          HttpClientModule,
-          OwlModule,
-          CarouselModule,
-          ImageUploadModule.forRoot()
-        ],
-        //declarations: [AppComponent],
-        categorySlider,
-        productStylesSlider,
-        productOptionsSlider,
-        DaliDraggable,
-        optionsCategoriesSlider,
-        wallChangeLeft,
-        wallChangeRight,
-        CanvasInteractionDirective,
-        bootstrap: [AppComponent],
-        providers: [CarouselModule],
-
-      }),
-      AppModule
-    );
-    return AppModule;
-  })();
-}
+export class AppModule {}

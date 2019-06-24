@@ -17,6 +17,13 @@ import { __decorate, __metadata } from 'tslib';
 
 
 // tslint:disable
+
+@Component({
+  selector: 'category-slider',
+  template: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
 export class categorySlider {
   categorySlider = (function() {
     function categorySlider(_prodServ, carouselOne) {
@@ -67,17 +74,6 @@ export class categorySlider {
       'baseProductClicked',
       void 0
     );
-    categorySlider = __decorate(
-      [
-        Component({
-          selector: 'category-slider',
-          template: './app.component.html',
-          styleUrls: ['./app.component.css']
-        }),
-        __metadata('ProductService', 'NgxCarousel')
-      ],
-      categorySlider
-    );
-    return categorySlider;
+    __metadata('ProductService', 'NgxCarousel');
   })();
 }

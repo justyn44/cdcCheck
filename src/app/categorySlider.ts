@@ -1,12 +1,17 @@
-import {
-  EventEmitter
-} from '@angular/core';
+import { EventEmitter, Component, Input, Output } from '@angular/core';
 import { __decorate, __metadata } from 'tslib';
 
 // tslint:disable
+
+@Component({
+  selector: 'category-slider',
+  template: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
 export class categorySlider {
   categorySlider = (function() {
-      function categorySlider(_prodServ, carouselOne) {
+    function categorySlider(_prodServ, carouselOne) {
       this._prodServ = _prodServ;
       this.carouselOne = carouselOne;
       this.baseProductClicked = new EventEmitter();
@@ -42,16 +47,18 @@ export class categorySlider {
     categorySlider.prototype.ngAfterViewInit = function() {
       // console.log(this.swiperContainer);
     };
-    __decorate([Object('Input')(), __metadata('design:type', Number)], categorySlider.prototype, 'currentCategory', void 0);
-    __decorate([Object('Output')(), __metadata('design:type', EventEmitter)], categorySlider.prototype, 'baseProductClicked', void 0);
-    categorySlider = __decorate([
-      Object('Component')({
-        selector: 'category-slider',
-        template: './src/app/category-slider.component.html',
-        styles: './src/app/category-slider.css'
-      }),
-      __metadata('ProductService', 'NgxCarousel')
-    ], categorySlider);
-    return categorySlider;
+    __decorate(
+      [Input(), __metadata('design:type', Number)],
+      categorySlider.prototype,
+      'currentCategory',
+      void 0
+    );
+    __decorate(
+      [Output(), __metadata('design:type', EventEmitter)],
+      categorySlider.prototype,
+      'baseProductClicked',
+      void 0
+    );
+    __metadata('ProductService', 'NgxCarousel')
   })();
 }

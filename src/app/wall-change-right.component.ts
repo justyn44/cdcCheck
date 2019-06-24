@@ -6,13 +6,21 @@ import {
   SkipSelf,
   NgModule,
   NgModuleFactoryLoader,
-  EventEmitter
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 import { ProductService } from './product.service';
 import { __decorate, __metadata } from 'tslib';
 // import { EventEmitter } from 'EventEmitter';
 
 // tslint:disable
+
+@Component({
+  selector: 'wall-change-right',
+  template: '<div> <a (click)="onSelect()" style="cursor:pointer;"><img src="/assets/images/icons/rotate-right.png"></a></div>'
+})
+
 export class wallChangeRight {
   wallChangeRight = (function() {
     function wallChangeRight(_prodServ) {
@@ -90,28 +98,17 @@ export class wallChangeRight {
       this.wallChangeRightClicked.emit(this.currentProduct);
     };
     __decorate(
-      [Object('Input'), __metadata('design:type', Object)],
+      [Input, __metadata('design:type', Object)],
       wallChangeRight.prototype,
       'currentProduct',
       void 0
     );
     __decorate(
-      [Object('Output'), __metadata('design:type', EventEmitter)],
+      [Output, __metadata('design:type', EventEmitter)],
       wallChangeRight.prototype,
       'wallChangeRightClicked',
       void 0
     );
-    wallChangeRight = __decorate(
-      [
-        Object('Component')({
-          selector: 'wall-change-right',
-          template:
-            '<div> <a (click)="onSelect()" style="cursor:pointer;"><img src="/assets/images/icons/rotate-right.png"></a></div>'
-        }),
-        __metadata('design:paramtypes', 'ProductService')
-      ],
-      wallChangeRight
-    );
-    return wallChangeRight;
+    __metadata('design:paramtypes', 'ProductService');
   })();
 }

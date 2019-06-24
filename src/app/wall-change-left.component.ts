@@ -6,7 +6,9 @@ import {
   SkipSelf,
   NgModule,
   NgModuleFactoryLoader,
-  EventEmitter
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 import { ProductService } from './product.service';
 import { __decorate, __metadata } from 'tslib';
@@ -14,6 +16,12 @@ import 'reflect-metadata';
 // import { EventEmitter } from 'EventEmitter';
 
 // tslint:disable
+
+@Component({
+  selector: 'wall-change-left',
+  template: '<div><a style="cursor:pointer;" (click)="onSelect()" ><img src="/assets/images/icons/rotate-left.png"></a></div>'
+})
+
 export class wallChangeLeft {
   wallChangeLeft = (function() {
     function wallChangeLeft(_prodServ) {
@@ -92,32 +100,23 @@ export class wallChangeLeft {
       this.wallChangeLeftClicked.emit(this.currentProduct);
     };
     __decorate(
-      Object('Input')(),
+      Input(),
       __metadata('design:type', Object),
       wallChangeLeft.prototype,
       'currentProduct'
     );
     __decorate(
-      Object('Input')(),
+      Input(),
       __metadata('design:type', Number),
       wallChangeLeft.prototype,
       'zidCurent'
     );
     __decorate(
-      Object('Output')(),
+      Output(),
       __metadata('design:type', EventEmitter),
       wallChangeLeft.prototype,
       'wallChangeLeftClicked'
     );
-    wallChangeLeft = __decorate(
-      Object('Component')({
-        selector: 'wall-change-left',
-        template:
-          '<div><a style="cursor:pointer;" (click)="onSelect()" ><img src="/assets/images/icons/rotate-left.png"></a></div>'
-      }),
-      __metadata('design:paramtypes', 'ProductService'),
-      wallChangeLeft
-    );
-    return wallChangeLeft;
+    __metadata('design:paramtypes', 'ProductService');
   })();
 }

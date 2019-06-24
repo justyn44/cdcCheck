@@ -26,6 +26,7 @@ import { CarouselModule } from 'ngx-carousels';
   template: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 @__metadata('ProductService', 'CarouselModule')
 export class productStylesSlider {
   productStylesSlider = (function() {
@@ -101,16 +102,7 @@ export class productStylesSlider {
       'productStyleClicked',
       void 0
     );
-    productStylesSlider = __decorate(
-      Object('Component')({
-        selector: 'product-styles-slider',
-        providers: [],
-        template: './src/app/product-styles-slider.component.html',
-        styles: './src/app/product-styles-slider.css'
-      }),
       __metadata('ProductService', 'CarouselModule'),
-      'productStylesSlider'
-    );
-    return productStylesSlider;
+      'productStylesSlider';
   })();
 }

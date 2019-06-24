@@ -20,6 +20,9 @@ import { Headers, RequestOptions, Http } from '@angular/http';
 import { productStyle } from './product-style';
 
 // tslint:disable
+
+@Injectable()
+
 export class ProductService {
 ProductService = (function () {
     function ProductService(http) {
@@ -765,10 +768,6 @@ ProductService = (function () {
                 ] },
         ];
     };
-    ProductService = __decorate([
-        Injectable(),
-        __metadata('design:paramtypes', 'Http')
-    ], ProductService);
-    return ProductService
+    __metadata('design:paramtypes', 'Http')
 }());
 }

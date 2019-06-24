@@ -6,7 +6,9 @@ import {
   SkipSelf,
   NgModule,
   NgModuleFactoryLoader,
-  EventEmitter
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 import { __decorate, __metadata } from 'tslib';
 import { KSSwiperContainer, KSSwiperSlide } from 'angular2-swiper';
@@ -14,6 +16,12 @@ import { KSSwiperContainer, KSSwiperSlide } from 'angular2-swiper';
 import { ProductService } from './product.service';
 
 // tslint:disable
+
+@Component({
+  selector: 'product-options-slider',
+  template: './app.component.html'
+})
+
 export class productOptionsSlider {
   productOptionsSlider = function() {
     function productOptionsSlider(_prodServ) {
@@ -68,19 +76,19 @@ export class productOptionsSlider {
       // console.log(this.currentBaseProduct);
     };
     __decorate(
-      [Object('Input')(), __metadata('design:type', Array)],
+      [Input(), __metadata('design:type', Array)],
       productOptionsSlider.prototype,
       'currentSelectedOption',
       void 0
     );
     __decorate(
-      [Object('Input')(), __metadata('design:type', Number)],
+      [Input(), __metadata('design:type', Number)],
       productOptionsSlider.prototype,
       'currentBaseProduct',
       void 0
     );
     __decorate(
-      [Object('Output')(), __metadata('design:type', EventEmitter)],
+      [Output(), __metadata('design:type', EventEmitter)],
       productOptionsSlider.prototype,
       'productStyleClicked',
       void 0
@@ -94,16 +102,6 @@ export class productOptionsSlider {
       'swiperContainer',
       void 0
     );
-    productOptionsSlider = __decorate(
-      [
-        Object('Component')({
-          selector: 'product-options-slider',
-          template: 'src/app/product-options-slider.component.html'
-        }),
-        __metadata('design:paramtypes', 'ProductService')
-      ],
-      productOptionsSlider
-    );
-    return productOptionsSlider;
+        __metadata('design:paramtypes', 'ProductService');
   };
 }

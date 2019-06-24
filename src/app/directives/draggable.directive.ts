@@ -11,8 +11,17 @@ import {
   Input
 } from '@angular/core';
 import { __decorate, __metadata } from 'tslib';
-
 // tslint:disable
+
+@Directive({
+  selector: 'dalidraggable',
+  host: {
+    '(dragstart)': 'onDragStart($event)',
+    '(dragend)': 'onDragEnd($event)',
+    '(drag)': 'onDrag($event)'
+  }
+})
+
 export class DaliDraggable {
   DaliDraggable = (function() {
     function DaliDraggable(el, renderer) {
@@ -73,20 +82,6 @@ export class DaliDraggable {
       'boundary',
       void 0
     );
-    DaliDraggable = __decorate(
-      [
-        Directive({
-          selector: '[dalidraggable]',
-          host: {
-            '(dragstart)': 'onDragStart($event)',
-            '(dragend)': 'onDragEnd($event)',
-            '(drag)': 'onDrag($event)'
-          }
-        }),
-        __metadata('ElementRef', 'Renderer2')
-      ],
-      DaliDraggable
-    );
-    return DaliDraggable;
+    __metadata('ElementRef', 'Renderer2');
   })();
 }

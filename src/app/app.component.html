@@ -1,0 +1,311 @@
+<div class="container-fluid">
+  <div *ngIf="percentComplete < 100" class="loader-container">
+    Loading objects
+    <div
+      class="loading-bar"
+      [style.width.%]="percentComplete"
+      style="background-color:hsl(171, 100%, 41%)"
+    >
+      {{ percentComplete }}%
+    </div>
+  </div>
+  <!-- Start Header-->
+  <div class="row top-section">
+    <div class="col-3 col-md-2">
+      <img
+        alt="Custom Design Center"
+        src="https://placeholder.com/wp-content/uploads/2018/10/placeholder.com-logo1.jpg"
+        class="logo"
+      />
+    </div>
+    <!-- *ngIf="percentComplete < 100"  -->
+    <div class="col-9 col-md-7 product-details">
+      <h2 class="title">
+        {{ configSelect.style.nameStyle }}
+      </h2>
+      <p class="subtitle">{{ selectStyle.description }}</p>
+    </div>
+    <div class="col-2 col-md-2">Intersect: {{ tmp }}</div>
+  </div>
+  <!-- End Header -->
+  <!-- Main Content -->
+  <div class="row">
+    <div class="col-12 col-md-2">
+      <div class="col-6 col-md-12 toolbox-group">
+        <h5 class="subtitle">Shed Options</h5>
+        <label class="label">Shed Size (Depth x Width)</label>
+        <div class="select is-primary custBut">
+          <select
+            [(ngModel)]="configSelect.style.dwStyle"
+            (ngModelChange)="onProductSizeChanged()"
+            name="Choose the depth and width"
+            class="ui fluid search selection dropdown"
+          >
+            <option
+              *ngFor="let size of selectStyle.depthwidth"
+              [attr.value]="size.$.value"
+              >{{ size.$.name }}</option
+            >
+          </select>
+        </div>
+        <!-- <select [(ngModel)]="shedSize" (ngModelChange)="onProductSizeChanged()" name="Select size" class="ui fluid search selection dropdown">
+      <option *ngFor="let size of wallSizes" [attr.value]=size.value>{{size.name}}</option>
+  </select> -->
+        <label class="label">Height of the walls</label>
+        <div class="select is-primary custBut">
+          <select
+            [(ngModel)]="configSelect.style.heightStyle"
+            (ngModelChange)="onProductSizeChanged()"
+            name="Select wall height"
+            class="ui fluid search selection dropdown"
+          >
+            <option
+              *ngFor="let height of selectStyle.wallheight"
+              [attr.value]="height.$.value"
+              >{{ height.$.name }}</option
+            >
+          </select>
+        </div>
+        <label class="label">Overhang</label>
+        <div class="select is-primary custBut">
+          <select
+            [(ngModel)]="selectedOverhang"
+            (ngModelChange)="onOverhangChanged()"
+            name="Select an overhang"
+            class="ui fluid search selection dropdown"
+          >
+            <option
+              *ngFor="let overhang of selectStyle.overhang"
+              [attr.value]="overhang.$.value"
+              >{{ overhang.$.name }}</option
+            >
+          </select>
+        </div>
+        <!-- <select>
+  <option value="0">Std." (88.5) N/C</option>
+  <option value="6">+6"</option>
+  <option value="12">+12" </option>
+</select> -->
+        <br />
+        <button
+          class="options-button button is-primary custBut"
+          (click)="showSidings()"
+        >
+          Change the siding
+        </button>
+        <br />
+        <button
+          class="options-button button is-primary custBut"
+          (click)="showTrim()"
+        >
+          Add a trim
+        </button>
+      </div>
+      <div class="col-6 col-md-12 toolbox-group">
+        <h5>Add options</h5>
+        <div class="options-categories-list">
+          <button
+            *ngFor="let category of optionsCategories"
+            (click)="showOptions(category)"
+            class="options-button button is-primary custBut"
+          >
+            {{ category.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      #container
+      class="col-12 col-md-10"
+      id="renderer_container"
+      canvasinteraction
+      (onMouseDown)="onCanvasClickDown($event)"
+      (onMouseUp)="onCanvasClickUp($event)"
+      (onMouseMove)="onCanvasMouseMove($event)"
+      (drop)="droppedOption($event, dropData)"
+      (dragover)="allowDrop($event)"
+    ></div>
+    <scene></scene>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-12 col-xs-12 category-buttons">
+      <!--<category-slider (productStyleClicked)='onProductStyleClicked($event)'>	
+</category-slider> -->
+      <button
+        class="category-button button is-primary custBut"
+        *ngFor="let category of productCategories"
+        (click)="changeCategory(category.id)"
+        [ngClass]="category.id === catSelect ? 'selected' : ''"
+      >
+        {{ category.name }}
+      </button>
+    </div>
+    <!-- id="styles-container" -->
+    <div class="col-12 col-md-12" col-xs-12>
+      <!-- <div class="slider-label">Choose a style</div> -->
+      <product-styles-slider
+        [currentSelectedProduct]="this.configSelect"
+        [(category)]="catSelect"
+        (productStyleClicked)="onProductStyleClicked($event)"
+      >
+      </product-styles-slider>
+    </div>
+  </div>
+  <div class="toolbox-group floating-right-center">
+    <h5>Change the backgrond</h5>
+    <div class="select is-primary custBut">
+      <select
+        [(ngModel)]="currentBG"
+        (change)="changeBackground($event)"
+      >
+        <option value="pool">Pool</option>
+        <option value="Park2">Park2</option>
+        <option value="Sorsele">Sorsele</option>
+      </select>
+    </div>
+    <br />
+    <br />
+    <h5 class="subtitle">Upload your own image</h5>
+    <image-upload
+      [max]="2"
+      [extensions]="['jpeg', 'png']"
+      class="image-upload"
+      (removed)="onBackgroundRemoved($event)"
+      (uploadFinished)="onBackgroundUploadFinished($event)"
+      (uploadStateChanged)="onBackgroundUploadStateChanged($event)"
+    >
+    </image-upload>
+  </div>
+  <div class="toolbox-group floating-right-bottom">
+    <h5 class="subtitle">Share your design</h5>
+    <button
+      class="share-btn button is-link custBut"
+      color="primary"
+      (click)="shareOnFacebook()"
+    >
+      <i class="fab fa-facebook-f"></i>&nbsp; Share
+    </button>
+    <br />
+    <button class="share-btn button is-info custBut" (click)="shareOnTwitter()">
+      <i class="fab fa-twitter"></i>&nbsp; Tweet
+    </button>
+    <br />
+    <button
+      class="share-btn button is-primary custBut"
+      (click)="takeScreenshot()"
+    >
+      <i class="fas fa-save"></i>&nbsp; Screenshot
+    </button>
+    <br />
+  </div>
+  <div
+    id="context-menu"
+    [ngClass]="selectedElement != null ? 'visible' : 'hidden'"
+    [style.left.px]="mouse.clientX + 20"
+    [style.top.px]="mouse.clientY"
+  >
+    <button
+      [ngClass]="draggingStartedAt != null ? 'dragging' : 'inactive'"
+      draggable="true"
+      (drag)="dragObject($event)"
+    >
+      <i class="material-icons">open_with</i>
+    </button>
+    <br />
+    <br />
+    <button (click)="removeSelectedElement()">
+      <i class="material-icons">delete</i>
+    </button>
+  </div>
+  <!-- Start drawer for slidings -->
+  <mat-card class="sidings-drawer" [@sidingsDrawertrigger]="drawerStateSide">
+    <mat-card-header>
+      <div class="col-md-9 drawer-title subtitle">
+        Change the sidings
+      </div>
+      <div class="col-md-3">
+        <button
+          class="button is-primary custBut"
+          mat-mini-fab
+          color="accent"
+          (click)="closeSidingsDrawer()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <button
+        class="siding-option button is-primary custBut"
+        *ngFor="let siding of sidingOptions"
+        (click)="changeSidingsTexture('wall-1', siding)"
+      >
+        <img src="{{ siding.thumbnail }}" />
+        <h6>{{ siding.name }}</h6>
+      </button>
+    </mat-card-content>
+  </mat-card>
+  <!-- End drawer for slidings -->
+  <!-- Start drawer for trim -->
+  <mat-card class="sidings-drawer" [@trimDrawertrigger]="drawerStateTrim">
+    <mat-card-header>
+      <div class="col-md-9 drawer-title subtitle">
+        Change the trim
+      </div>
+      <div class="col-md-3">
+        <button
+          class="button is-primary custBut"
+          mat-mini-fab
+          color="accent"
+          (click)="closeTrimDrawer()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <button
+        class="siding-option button is-primary custBut"
+        *ngFor="let trim of trimOptions"
+        (click)="changeTrimTexture(trim)"
+      >
+        <img src="{{ trim.thumbnail }}" />
+        <h6>{{ trim.name }}</h6>
+      </button>
+    </mat-card-content>
+  </mat-card>
+  <!-- End drawer for trim -->
+  <!-- Start drawer for options -->
+  <mat-card class="options-drawer" [@optionsDrawertrigger]="drawerStateOpt">
+    <mat-card-header>
+      <div class="col-md-8 drawer-title">
+        {{ optCatSelect.name }}
+      </div>
+      <div class="col-md-3">
+        <button
+          class="button is-primary"
+          mat-mini-fab
+          color="accent"
+          (click)="closeOptions()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <div
+        *ngFor="let option of availableOptions"
+        class="option-details"
+        draggable="true"
+        (drag)="startDraggingOption($event, option)"
+        (dragend)="removeHighlights()"
+        (dragstart)="highlightTargets(option)"
+      >
+        <img src="{{ option.image }}" />
+        <h6>{{ option.name }}</h6>
+        <!-- <div class="btn-add-option" (click)="loadOption(option.opt_type, option.order_code)">Add to building</div> -->
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- End drawer for options -->
+</div>

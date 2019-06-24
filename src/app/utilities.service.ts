@@ -5,11 +5,17 @@ import {
   Renderer,
   SkipSelf,
   NgModule,
-  NgModuleFactoryLoader
+  NgModuleFactoryLoader,
+  Injectable
 } from '@angular/core';
 import { __decorate, __metadata } from 'tslib';
 
 // tslint:disable
+
+@Injectable({
+  providedIn: 'root'
+})
+
 export class UtilitiesService {
   UtilitiesService = (function() {
     function UtilitiesService() {}
@@ -24,15 +30,6 @@ export class UtilitiesService {
       console.log('[Utilities Service] ReverseScale ', reverseScale);
       return reverseScale;
     };
-    UtilitiesService = __decorate(
-      [
-        Object('Injectable')({
-          providedIn: 'root'
-        }),
-        __metadata('design:paramtypes', [])
-      ],
-      UtilitiesService
-    );
-    return UtilitiesService;
+    __metadata('design:paramtypes', []);
   })();
 }

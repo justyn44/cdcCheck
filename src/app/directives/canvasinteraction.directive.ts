@@ -15,6 +15,11 @@ import { __decorate, __metadata } from 'tslib';
 // import { EventEmitter } from 'EventEmitter';
 
 // tslint:disable
+
+@Directive({
+  selector: '[canvasinteraction]'
+})
+
 export class CanvasInteractionDirective {
   CanvasInteractionDirective = (function() {
     function CanvasInteractionDirective() {
@@ -82,15 +87,5 @@ export class CanvasInteractionDirective {
       'onMove',
       null
     );
-    CanvasInteractionDirective = __decorate(
-      [
-       Directive({
-          selector: '[canvasinteraction]'
-        }),
-        __metadata('design:paramtypes', [])
-      ],
-      CanvasInteractionDirective
-    );
-    return CanvasInteractionDirective;
   })();
 }
