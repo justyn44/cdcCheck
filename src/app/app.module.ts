@@ -30,10 +30,10 @@ import { HttpClientModule } from '@angular/common/http';
 import 'rxjs-compat';
 // import { AtftModule } from 'atft';
 
-
 // tslint:disable
 @NgModule({
   imports: [
+    AppComponent,
     BrowserModule,
     BrowserAnimationsModule,
     MatCardModule,
@@ -42,10 +42,9 @@ import 'rxjs-compat';
     HttpClientModule,
     OwlModule,
     CarouselModule,
-    ImageUploadModule.forRoot(),
+    ImageUploadModule.forRoot()
   ],
   exports: [
-    AppComponent,
     categorySlider,
     productStylesSlider,
     productOptionsSlider,
@@ -56,8 +55,17 @@ import 'rxjs-compat';
     CanvasInteractionDirective
   ],
   providers: [CarouselModule],
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent,
+    categorySlider,
+    productStylesSlider,
+    productOptionsSlider,
+    DaliDraggable,
+    optionsCategoriesSlider,
+    wallChangeLeft,
+    wallChangeRight,
+    CanvasInteractionDirective
+  ],
   bootstrap: [AppComponent]
-  })
-
+})
 export class AppModule {}
