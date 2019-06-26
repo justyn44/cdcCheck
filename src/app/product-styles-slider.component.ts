@@ -8,7 +8,9 @@ import {
   NgModuleFactoryLoader,
   EventEmitter,
   NO_ERRORS_SCHEMA,
-  CUSTOM_ELEMENTS_SCHEMA
+  CUSTOM_ELEMENTS_SCHEMA,
+  Input,
+  Output
 } from '@angular/core';
 import { __decorate, __metadata } from 'tslib';
 // import { EventEmitter } from 'EventEmitter';
@@ -18,7 +20,10 @@ import { CarouselModule } from 'ngx-carousels';
 // tslint:disable
 
 @NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA
+  ],
 })
 @Component({
   selector: 'productStylesSlider',
@@ -81,14 +86,14 @@ export class productStylesSlider {
       console.log('carousel loaded', $event);
     };
     __decorate(
-      [Object('Input')(), __metadata('design:type', Object)],
+      [Input(), __metadata('design:type', Object)],
       productStylesSlider.prototype,
       'currentSelectedProduct',
       void 0
     );
     __decorate(
       [
-        Object('Input')('category'),
+        Input('category'),
         __metadata('design:type', String),
         __metadata('design:paramtypes', String)
       ],
@@ -97,7 +102,7 @@ export class productStylesSlider {
       null
     );
     __decorate(
-      [Object('Output')(), __metadata('design:type', EventEmitter)],
+      [Output(), __metadata('design:type', EventEmitter)],
       productStylesSlider.prototype,
       'productStyleClicked',
       void 0
