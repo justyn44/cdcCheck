@@ -16,6 +16,7 @@ import { __decorate, __metadata } from 'tslib';
 // import { EventEmitter } from 'EventEmitter';
 import { ProductService } from './product.service';
 import { CarouselModule } from 'ngx-carousels';
+import { categorySlider } from './categorySlider';
 
 // tslint:disable
 
@@ -26,7 +27,7 @@ import { CarouselModule } from 'ngx-carousels';
   ],
 })
 @Component({
-  selector: 'productStylesSlider',
+  selector: 'product-styles-slider',
   providers: [],
   template: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -34,6 +35,8 @@ import { CarouselModule } from 'ngx-carousels';
 
 @__metadata('ProductService', 'CarouselModule')
 export class productStylesSlider {
+  @Input() currentSelectedProduct: string;
+  @Input() category: string;
   productStylesSlider = (function() {
     function productStylesSlider(_prodServ, stylesCarousel) {
       this._prodServ = _prodServ;

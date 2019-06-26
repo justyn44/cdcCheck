@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div *ngIf="percentComplete < 100" class="loader-container">
+  <!-- <div ngIf="percentComplete < 100" class="loader-container">
     Loading objects
     <div
       class="loading-bar"
@@ -8,7 +8,7 @@
     >
       {{ percentComplete }}%
     </div>
-  </div>
+  </div> -->
   <!-- Start Header-->
   <div class="row top-section">
     <div class="col-3 col-md-2">
@@ -19,30 +19,30 @@
       />
     </div>
     <!-- *ngIf="percentComplete < 100"  -->
-    <div class="col-9 col-md-7 product-details">
+    <div class="product-details">
       <h2 class="title">
-        {{ configSelect.style.nameStyle }}
+        {{ configSelect?.style.nameStyle }}
       </h2>
-      <p class="subtitle">{{ selectStyle.description }}</p>
+      <p class="subtitle">{{ selectStyle?.description }}</p>
     </div>
-    <div class="col-2 col-md-2">Intersect: {{ tmp }}</div>
+    <div class="">Intersect: {{ tmp }}</div>
   </div>
   <!-- End Header -->
   <!-- Main Content -->
   <div class="row">
-    <div class="col-12 col-md-2">
-      <div class="col-6 col-md-12 toolbox-group">
+    <div class="">
+      <div class="toolbox-group">
         <h5 class="subtitle">Shed Options</h5>
         <label class="label">Shed Size (Depth x Width)</label>
         <div class="select is-primary custBut">
           <select
-            [(ngModel)]="configSelect.style.dwStyle"
+            [(ngModel)]="configSelect?.style.dwStyle"
             (ngModelChange)="onProductSizeChanged()"
             name="Choose the depth and width"
             class="ui fluid search selection dropdown"
           >
             <option
-              *ngFor="let size of selectStyle.depthwidth"
+              *ngFor="let size of selectStyle?.depthwidth"
               [attr.value]="size.$.value"
               >{{ size.$.name }}</option
             >
@@ -54,13 +54,13 @@
         <label class="label">Height of the walls</label>
         <div class="select is-primary custBut">
           <select
-            [(ngModel)]="configSelect.style.heightStyle"
+            [(ngModel)]="configSelect?.style.heightStyle"
             (ngModelChange)="onProductSizeChanged()"
             name="Select wall height"
             class="ui fluid search selection dropdown"
           >
             <option
-              *ngFor="let height of selectStyle.wallheight"
+              *ngFor="let height of selectStyle?.wallheight"
               [attr.value]="height.$.value"
               >{{ height.$.name }}</option
             >
@@ -75,7 +75,7 @@
             class="ui fluid search selection dropdown"
           >
             <option
-              *ngFor="let overhang of selectStyle.overhang"
+              *ngFor="let overhang of selectStyle?.overhang"
               [attr.value]="overhang.$.value"
               >{{ overhang.$.name }}</option
             >
@@ -101,7 +101,7 @@
           Add a trim
         </button>
       </div>
-      <div class="col-6 col-md-12 toolbox-group">
+      <div class="toolbox-group">
         <h5>Add options</h5>
         <div class="options-categories-list">
           <button
@@ -116,7 +116,7 @@
     </div>
     <div
       #container
-      class="col-12 col-md-10"
+      class=""
       id="renderer_container"
       canvasinteraction
       (onMouseDown)="onCanvasClickDown($event)"
@@ -127,7 +127,7 @@
     ></div>
   </div>
   <div class="row">
-    <div class="col-12 col-md-12 col-xs-12 category-buttons">
+    <div class="category-buttons">
       <!--<category-slider (productStyleClicked)='onProductStyleClicked($event)'>	
 </category-slider> -->
       <button
@@ -140,7 +140,7 @@
       </button>
     </div>
     <!-- id="styles-container" -->
-    <div class="col-12 col-md-12" col-xs-12>
+    <div class="" col-xs-12>
       <!-- <div class="slider-label">Choose a style</div> -->
       <product-styles-slider
         [currentSelectedProduct]="this.configSelect"
@@ -153,10 +153,7 @@
   <div class="toolbox-group floating-right-center">
     <h5>Change the backgrond</h5>
     <div class="select is-primary custBut">
-      <select
-        [(ngModel)]="currentBG"
-        (change)="changeBackground($event)"
-      >
+      <select [(ngModel)]="currentBG" (change)="changeBackground($event)">
         <option value="pool">Pool</option>
         <option value="Park2">Park2</option>
         <option value="Sorsele">Sorsele</option>
@@ -200,8 +197,8 @@
   <div
     id="context-menu"
     [ngClass]="selectedElement != null ? 'visible' : 'hidden'"
-    [style.left.px]="mouse.clientX + 20"
-    [style.top.px]="mouse.clientY"
+    [style.left.px]="mouse?.clientX + 20"
+    [style.top.px]="mouse?.clientY"
   >
     <button
       [ngClass]="draggingStartedAt != null ? 'dragging' : 'inactive'"
@@ -219,10 +216,10 @@
   <!-- Start drawer for slidings -->
   <mat-card class="sidings-drawer" [@sidingsDrawertrigger]="drawerStateSide">
     <mat-card-header>
-      <div class="col-md-9 drawer-title subtitle">
+      <div class="drawer-title subtitle">
         Change the sidings
       </div>
-      <div class="col-md-3">
+      <div class="">
         <button
           class="button is-primary custBut"
           mat-mini-fab
@@ -248,10 +245,10 @@
   <!-- Start drawer for trim -->
   <mat-card class="sidings-drawer" [@trimDrawertrigger]="drawerStateTrim">
     <mat-card-header>
-      <div class="col-md-9 drawer-title subtitle">
+      <div class="drawer-title subtitle">
         Change the trim
       </div>
-      <div class="col-md-3">
+      <div class="">
         <button
           class="button is-primary custBut"
           mat-mini-fab
@@ -277,10 +274,10 @@
   <!-- Start drawer for options -->
   <mat-card class="options-drawer" [@optionsDrawertrigger]="drawerStateOpt">
     <mat-card-header>
-      <div class="col-md-8 drawer-title">
-        {{ optCatSelect.name }}
+      <div class="drawer-title">
+        {{ optCatSelect?.name }}
       </div>
-      <div class="col-md-3">
+      <div class="">
         <button
           class="button is-primary"
           mat-mini-fab

@@ -5,14 +5,28 @@ import {
   NgModule,
   NgModuleFactoryLoader,
   CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA
+  NO_ERRORS_SCHEMA,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RequestOptions } from '@angular/http';
+import { RequestOptions, Http } from '@angular/http';
 import * as THREE from 'three-full';
+import { DragControls } from 'three-dragcontrols';
+import { OBJLoader } from 'three-obj-loader';
+import { MTLLoader } from 'three-mtl-loader';
+import { Mesh, BoxGeometry, BackSide } from 'three';
+import { ProductService } from './product.service';
+import {
+  transition,
+  state,
+  animate,
+  trigger,
+  style
+} from '@angular/animations';
 import { rendererTypeName, ThrowStmt } from '@angular/compiler';
 import {
   Geometry,
@@ -30,8 +44,10 @@ import { AppModule } from './app.module';
 import { OwlModule } from 'ngx-owl-carousel';
 import { CarouselModule } from 'ngx-carousels';
 import { ImageUploadModule } from 'angular2-image-upload';
+import { UtilitiesService } from './utilities.service';
 // import { AtftModule } from 'atft';
 
+// tslint:disable
 var __decorate =
   (this && this.__decorate) ||
   function(decorators, target, key, desc) {
@@ -43,34 +59,2224 @@ var __decorate =
           ? (desc = Object.getOwnPropertyDescriptor(target, key))
           : desc,
       d;
-    if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function') {
+    if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function')
       r = Reflect.decorate(decorators, target, key, desc);
-    } else {
-      for (var i = decorators.length - 1; i >= 0; i--) {
-        if ((d = decorators[i])) {
+    else
+      for (var i = decorators.length - 1; i >= 0; i--)
+        if ((d = decorators[i]))
           r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        }
-      }
-    }
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
 var __metadata =
   (this && this.__metadata) ||
   function(k, v) {
-    if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function') {
+    if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function')
       return Reflect.metadata(k, v);
-    }
   };
 
-// tslint:disable
-
 @NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
-
 @Component({
-  selector: 'app-component',
-  templateUrl: './app.component.html'
+  templateUrl: require('./app.component.html'),
+  selector: 'app-root',
+  styles: ['./app.component.css'],
+  providers: [ProductService],
+  animations: [
+    trigger('stylesDrawertrigger', [
+      state('inactive', style({ transform: 'translateY(19vh)' })),
+      state('active', style({ transform: 'translateY(0)' })),
+      transition('inactive => active', animate('100ms ease-in')),
+      transition('active => inactive', animate('100ms ease-out'))
+    ]),
+    trigger('optionsDrawertrigger', [
+      state('inactive', style({ left: '-25%' })),
+      state('active', style({ left: '15%' })),
+      transition('inactive => active', animate('400ms ease-in')),
+      transition('active => inactive', animate('400ms ease-out'))
+    ]),
+    trigger('sidingsDrawertrigger', [
+      state('inactive', style({ left: '-25%' })),
+      state('active', style({ left: '15%' })),
+      transition('inactive => active', animate('400ms ease-in')),
+      transition('active => inactive', animate('400ms ease-out'))
+    ]),
+    trigger('trimDrawertrigger', [
+      state('inactive', style({ left: '-25%' })),
+      state('active', style({ left: '15%' })),
+      transition('inactive => active', animate('400ms ease-in')),
+      transition('active => inactive', animate('400ms ease-out'))
+    ])
+  ]
 })
-
-export class AppComponent{}
+export class AppComponent {
+  @ViewChild('rendererContainer', { static: false })
+  rendererContainer: ElementRef;
+  AppComponent = (function() {
+    function AppComponent(_prodServ, _utils, http, __decorate) {
+      this._prodServ = _prodServ;
+      this._utils = _utils;
+      this.http = http;
+      this.scene = new THREE.Scene();
+      this.sceneBg = new THREE.Scene();
+      this.wallMask = new THREE.Scene();
+      this.roofMask = new THREE.Scene();
+      this.roof = new THREE.Scene();
+      this.roofOptions = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(
+        55,
+        window.innerWidth / window.innerHeight,
+        1,
+        1000
+      );
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      // renderer = new THREE.WebGLRenderer();
+      this.controls = new DragControls(this.camera, this.renderer.domElement);
+      this.raycaster = new THREE.Raycaster();
+      this.mouse = { clientX: 0, clientY: 0, layerX: 0, layerY: 0 };
+      this.planeHelp = new THREE.Mesh(
+        new THREE.PlaneBufferGeometry(500, 500, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      this.selectedElement = null;
+      this.draggingStartedAt = null;
+      this.highlights = [];
+      this.comparePercentage = 0;
+      this.currentBG = 'pool';
+      // MATERIALS INIT
+      this.shingleMat = new THREE.MeshLambertMaterial({
+        flatShading: true,
+        map: THREE.ImageUtils.loadTexture('/assets/textures/shingles.jpg'),
+        reflectivity: 0.1
+      });
+      this.cedarMat = new THREE.MeshLambertMaterial({
+        flatShading: true,
+        map: THREE.ImageUtils.loadTexture('/assets/textures/wall_seamless.jpg'),
+        reflectivity: 0.1
+      });
+      this.cedarMatElem = new THREE.MeshPhongMaterial({
+        color: 0xdddddd,
+        map: THREE.ImageUtils.loadTexture(
+          '/assets/textures/' + 'wall_seamless' + '.jpg'
+        ),
+        transparent: false,
+        flatShading: true
+      });
+      this.redBTN = new THREE.LineBasicMaterial({
+        color: 0xff0000,
+        linewidth: 1,
+        linecap: 'round',
+        linejoin: 'round'
+      });
+      this.matSelect = new THREE.LineBasicMaterial({
+        color: 0xff0000,
+        linewidth: 1,
+        transparent: true,
+        opacity: 0.5,
+        linecap: 'round',
+        linejoin: 'round'
+      });
+      this.catSelect = 'pool-cabanas';
+      // configSelect: any = {style: {""}};
+      this.configSelect = {
+        side1: {},
+        side2: {},
+        side3: {},
+        side4: {},
+        style: {
+          barSize: '',
+          order_type: 'pc',
+          primaryTrim: '',
+          roofMat: 'shingles_cedar',
+          secondaryTrim: '',
+          styleCategory: 'pool-cabanas',
+          dwStyle: '10x16',
+          heightStyle: '88.5',
+          idStyle: '1',
+          nameStyle: 'Palmerston',
+          overStyle: '6',
+          sideStyle: ''
+        }
+      };
+      this.optCatSelect = 'windows';
+      this.selectStyle = {
+        $: { id: '1' },
+        depthwidth: [{ $: { id: '754' } }],
+        description: '',
+        includedoptions: '',
+        overhang: [{ $: { name: '' } }],
+        roofangle: '30',
+        roofstyle: 'gable',
+        wallheight: [{ $: { type: '' } }]
+      };
+      this.buildingOptions = [[], [], [], [], []];
+      this.sidingOrientation = 'horizontal';
+      this.drawerStateOpt = 'inactive';
+      this.drawerStateSide = 'inactive';
+      this.drawerStateTrim = 'inactive';
+      this.btnDevare = new THREE.Object3D();
+      this.btnMove = new THREE.Object3D();
+      // CONSTANTS
+      this.feetToPx = 75;
+      this.topPositionFullHd = 400;
+      this.wall_image = 0;
+      this.shedSize = '';
+      this.wallSizes = [];
+      this.viewport = { width: 0, height: 0, top: 0, left: 0 };
+      this.background_top = 0;
+      this.wallBounds = [];
+    }
+    AppComponent.prototype.ngOnInit = function() {
+      var _this = this;
+      this.catSelect = 'pool-cabanas';
+      this.wallSizes = this._prodServ.getSizes();
+      this.shedSize = this.wallSizes[0].value;
+      this.currentWall = 0;
+      this.productCategories = this._prodServ.getCategories();
+      this._prodServ.getStyles(this.catSelect).subscribe(
+        function(st) {
+          _this.selectStyle = st[0];
+          if (!Array.isArray(st[0].overhang)) {
+            _this.selectStyle.overhang = [st[0].overhang];
+          }
+          _this._prodServ
+            .getProductConfiguration(_this.selectStyle.$.defaultConfig)
+            .subscribe(function(res) {
+              _this.configSelect = res;
+              if (!Array.isArray(res.general.option)) {
+                _this.configSelect.general.option = [res.general.option];
+              }
+              console.log('Initial selected product', res);
+              // this.createGround();
+              _this.loadNewBuilding();
+              _this.addCubeMap();
+            });
+        },
+        function(err) {
+          console.log('Error loading styles' + err);
+        }
+      );
+      // this.currentWallName = this.configSelect.nameStyle;
+      this.optionsCategories = this._prodServ.getOptionsCategories();
+      this.sidingOptions = this._prodServ.getSidingOptions();
+      this.trimOptions = this._prodServ.getTrimOptions();
+      this.container = this.elementRef.nativeElement;
+      this.setViewport();
+      this.init3DScene();
+    };
+    // Load in new buildings
+    AppComponent.prototype.loadNewBuilding = function() {
+      var _this = this;
+      var building = this.configSelect.style.dwStyle.split('x');
+      this.configSelect.width = Number(building[1]);
+      this.configSelect.depth = Number(building[0]);
+      this.configSelect.height =
+        Number(this.configSelect.style.heightStyle) / 12;
+      this.configSelect.cdcCustomData = {
+        wallheightRatio: 1,
+        roofRatio: { scaleWidth: 1, scaleHeight: 1, scaleDepth: 1 }
+      };
+      console.log('The building depth is ', this.configSelect.depth);
+      console.log('Now loading the selected style: ', this.selectStyle);
+      console.log('Now loading the defualt config ', this.configSelect);
+      this.loadBasicStructure().then(
+        function(res) {
+          console.log(res + 'Now loading the roof');
+          _this.loadRoof().then(function() {
+            console.log('The roof has finished loading');
+            _this.loadStyleBasicOptions().then(
+              function(result) {
+                _this.alignEvenly(0);
+                if (_this.selectStyle.$.name === 'Glen Echo') {
+                  _this.loadGlenEchoAccesorry();
+                }
+                if (_this.selectStyle.$.name === 'Windsor') {
+                  _this.loadWindsorColumns();
+                }
+                if (_this.selectStyle.$.name === 'Barside') {
+                  _this.loadTerraceOption();
+                }
+                _this.loadRoofingOptions();
+              },
+              function(err) {
+                alert('There was and error loading the style:' + err);
+              }
+            );
+          });
+        },
+        function(err) {
+          console.log('There was an error', err);
+        }
+      );
+    };
+    AppComponent.prototype.loadBasicStructure = function() {
+      console.log('Now loading the basic structure');
+      var specialConfigurations = ['Catalina'];
+      var self = this;
+      if (self.selectStyle.$.name === 'Catalina') {
+        return self.loadBasicStructureCatalina();
+      } else {
+        var promise = new Promise(function(resolve, reject) {
+          var _loop_1 = function(i) {
+            var rotation = 0;
+            var filename = self.configSelect.width + 'ftx7.875ft';
+            switch (i) {
+              case 1:
+                rotation = 270;
+                filename = self.configSelect.depth + 'ftx7.875ft';
+                break;
+              case 2:
+                rotation = 180;
+                filename = self.configSelect + 'ftx7.875ft';
+                break;
+              case 3:
+                rotation = 90;
+                filename = self.configSelect + 'ftx7.875ft';
+                break;
+            }
+            var position = self.calculateWallPosition(i);
+            self
+              .loadWall('wall-' + i, filename, position, rotation)
+              .then(function() {
+                if (i === self.selectStyle.$.sides - 1) {
+                  resolve('Loaded successfully');
+                }
+              });
+          };
+          for (var i = 0; i < self.selectStyle.$.sides; i++) {
+            _loop_1(i);
+          }
+        });
+        return promise;
+      }
+    };
+    AppComponent.prototype.loadBasicStructureCatalina = function() {
+      var self = this;
+      console.log('Style: Catalina', self.selectStyle);
+      var promise = new Promise(function(resolve, reject) {
+        var _loop_2 = function(i) {
+          var rotation = 0;
+          var position = {};
+          position['x'] = 0;
+          position['y'] = 0 - (self.configSelect.height * 12) / 2;
+          position['z'] = 0;
+          var filename = self.configSelect.depth + 'ftx7.875ft';
+          switch (i) {
+            case 1:
+              rotation = 288;
+              position['x'] = -((self.configSelect.depth / 1.5) * 12);
+              position['z'] = -((self.configSelect.depth / 2) * 12);
+              break;
+            case 2:
+              rotation = 216;
+              position['x'] = (-self.configSelect.depth / 2.5) * 12;
+              position['z'] = -self.configSelect.depth * 1.2 * 12;
+              break;
+            case 3:
+              rotation = 144;
+              position['x'] = (self.configSelect.depth / 2.5) * 12;
+              position['z'] = -self.configSelect.depth * 1.2 * 12;
+              break;
+            case 4:
+              rotation = 72;
+              position['x'] = (self.configSelect.depth / 1.5) * 12;
+              position['z'] = (-self.configSelect.depth / 2) * 12;
+              break;
+          }
+          self
+            .loadWall('wall-' + i, filename, position, rotation)
+            .then(function() {
+              if (i === self.selectStyle.$.sides - 1) {
+                resolve('Loaded successfully: ');
+              }
+            });
+        };
+        for (var i = 0; i < self.selectStyle.$.sides; i++) {
+          _loop_2(i);
+        }
+      });
+      return promise;
+    };
+    AppComponent.prototype.calculateWallPosition = function(side) {
+      var extraHeight = 0;
+      if (this.roofIsFlat()) {
+        extraHeight = this.calculateActualRoofHeight() / 12;
+      }
+      var position = {};
+      switch (side) {
+        case 0:
+          position['x'] = 0;
+          position['y'] =
+            0 - ((this.configSelect.height - extraHeight) * 12) / 2;
+          position['z'] = 0;
+          break;
+        case 1:
+          position['x'] = 0 - (this.configSelect.width * 12) / 2;
+          position['y'] =
+            0 - ((this.configSelect.height - extraHeight) * 12) / 2;
+          position['z'] = 0 - (this.configSelect.depth * 12) / 2;
+          break;
+        case 2:
+          position['x'] = 0;
+          position['y'] =
+            0 - ((this.configSelect.height - extraHeight) * 12) / 2;
+          position['z'] = 0 - this.configSelect.depth * 12;
+          break;
+        case 3:
+          position['x'] = (this.configSelect.width * 12) / 2;
+          position['y'] =
+            0 - ((this.configSelect.height - extraHeight) * 12) / 2;
+          position['z'] = 0 - (this.configSelect.depth * 12) / 2;
+          break;
+      }
+      return position;
+    };
+    AppComponent.prototype.loadWall = function(
+      name,
+      filename,
+      position,
+      rotation
+    ) {
+      var self = this;
+      var manager = new THREE.LoadingManager();
+      var loader = new OBJLoader(manager);
+      var promise = new Promise(function(resolve, reject) {
+        var mtlLoader = new MTLLoader();
+        mtlLoader.setPath('../assets/models/wall/horizontal/');
+        mtlLoader.load(filename + '.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/models/wall/horizontal/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            filename + '.obj',
+            function(object) {
+              object.name = name;
+              var scaleHeight;
+              if (self.roofIsFlat()) {
+                var actualRoofHeight = self.calculateActualRoofHeight() / 12;
+                scaleHeight =
+                  self.configSelect.height / 7.875 + actualRoofHeight / 7.875;
+                self.configSelect.cdcCustomData.wallheightRatio = scaleHeight;
+              } else {
+                scaleHeight = self.configSelect.height / 7.875;
+              }
+              object.scale.set(1, scaleHeight, 1);
+              object.position.x = position.x;
+              object.position.y = position.y;
+              object.position.z = position.z;
+              object.rotation.set(0, THREE.Math.degToRad(rotation), 0);
+              self.scene.add(object);
+              resolve('Loaded successfully');
+            },
+            function(xhr) {
+              self.comparePercentage = Math.round(
+                (xhr.loaded / xhr.total) * 100
+              );
+            },
+            function(error) {
+              console.log('Something happened');
+            }
+          );
+        });
+      });
+      return promise;
+    };
+    AppComponent.prototype.loadAccessories = function() {
+      console.log('Now loading accessories');
+      var self = this;
+      var filename = 'table';
+      var promise = new Promise(function(resolve, reject) {
+        var mtlLoader = new MTLLoader();
+        mtlLoader.setPath('../assets/models/accessories/');
+        mtlLoader.load(filename + '.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/models/accessories/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            filename + '.obj',
+            function(object) {
+              object.name = 'accessories';
+              var xxx = new THREE.Box3().setFromObject(object);
+              object.scale.set(0.35, 0.35, 0.35);
+              object.position.x = -(self.configSelect.width / 1.5);
+              object.position.y = -(self.configSelect.width / 2);
+              object.position.z = 15;
+              object.rotation.y = THREE.Math.degToRad(330);
+              console.log('The accessories have finished loading', object);
+              self.scene.add(object);
+            },
+            function(xhr) {
+              self.comparePercentage = Math.round(
+                (xhr.loaded / xhr.total) * 100
+              );
+              console.log(self.comparePercentage + '% compvare');
+            },
+            function(error) {
+              console.log('There was an error');
+            }
+          );
+        });
+        resolve('Success');
+      });
+      return promise;
+    };
+    AppComponent.prototype.loadRoof = function() {
+      var self = this;
+      var filename = this.configSelect.style.nameStyle;
+      var promise = new Promise(function(resolve, rejcet) {
+        var mtlLoader = new MTLLoader();
+        mtlLoader.setPath('../assets/models/roof/');
+        mtlLoader.load(filename + '.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/models/roof/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            filename + '.obj',
+            function(object) {
+              object.name = 'roof';
+              object.renderOrder = 0;
+              var objSize = self.objectSize(object);
+              var actualWidth = self.calculateActualWidth();
+              var actualDepth = self.calculateActualDepth();
+              var scaleHeight = 1;
+              if (
+                self.selectStyle.roofstyle === 'gable' &&
+                self.selectStyle.$.name !== 'Barside'
+              ) {
+                var actualHeight = self.calculateActualRoofHeight();
+                scaleHeight = actualHeight / objSize.y;
+              }
+              var scaleWidth = actualWidth / objSize.x;
+              var scaleDepth = actualDepth / objSize.z;
+              object.scale.set(scaleWidth, scaleHeight, scaleDepth);
+              objSize = self.objectSize(object);
+              object.position.y = objSize.y / 2;
+              if (
+                self.selectStyle.$.rooftype === 'ab,1' ||
+                self.selectStyle.$.name === 'Barside'
+              ) {
+                object.position.z = -(
+                  self.configSelect.depth * 12 -
+                  objSize.z / 2 +
+                  Number(self.configSelect.style.overStyle)
+                );
+              } else {
+                object.position.z = -((self.configSelect.depth * 12) / 2);
+              }
+              self.roof.add(object);
+              self.loadWallMask(object.position, objSize);
+              resolve('Success:');
+            },
+            function(xhr) {
+              self.comparePercentage = Math.round(
+                (xhr.loaded / xhr.total) * 100
+              );
+              console.log(
+                'Loading room: ' + self.comparePercentage + '% compvare'
+              );
+            },
+            function(error) {
+              console.log('There was an error');
+            }
+          );
+        });
+      });
+      return promise;
+    };
+    AppComponent.prototype.calculateActualRoofHeight = function() {
+      var self = this;
+      var deg2rad = Math.PI / 180;
+      var actualWidth = self.calculateActualWidth();
+      var x = actualWidth;
+      var y = self.selectStyle.roofangle * deg2rad;
+      var actualHeight = (actualWidth / 2) * Math.tan(y);
+      actualWidth = Math.abs(actualHeight);
+      return actualHeight;
+    };
+    AppComponent.prototype.calculateActualDepth = function() {
+      var self = this;
+      var roofTypeMultiplier = 1;
+      if (
+        self.selectStyle.$.rooftype === 'ab,1' ||
+        self.selectStyle.$.Name === 'Barside'
+      ) {
+        roofTypeMultiplier = 1.4;
+      }
+      var actualDepth;
+      if (self.selectStyle.$.name === 'Catalina') {
+        actualDepth =
+          self.configSelect.depth * 2 * 12 * roofTypeMultiplier +
+          Number(self.configSelect.style.overStyle) * 1.2;
+      } else {
+        actualDepth =
+          self.configSelect.depth * 12 * roofTypeMultiplier +
+          Number(self.configSelect.style.overStyle) * 1.2;
+      }
+      return actualDepth;
+    };
+    AppComponent.prototype.calculateActualWidth = function() {
+      var self = this;
+      var actualWidth;
+      if (self.selectStyle.$.name === 'Catalina') {
+        actualWidth =
+          self.configSelect.depth * 2 * 12 +
+          Number(self.configSelect.style.overStyle) * 1.2;
+      } else {
+        actualWidth =
+          self.configSelect.width * 12 +
+          Number(self.configSelect.style.overStyle) * 12;
+      }
+      return actualWidth;
+    };
+    AppComponent.prototype.loadWallMask = function(position, objSize) {
+      var self = this;
+      var objLoader = new OBJLoader();
+      objLoader.setPath('../assets/models/wallmasks/');
+      var filename = self.selectStyle.$.name + '.obj';
+      var roof = self.roof.getObjectByName('roof');
+      objLoader.load(
+        filename,
+        function(object) {
+          object.name = 'wall_mask';
+          var objectSize = self.objectSize(object);
+          object.traverse(function(child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = self.matSelect;
+            }
+          });
+          var scaleHeight = self.objectSize(roof).y / objectSize.y;
+          var scaleWidth = (self.configSelect.width * 12) / objectSize.x;
+          var scaleDepth = (self.configSelect.depth * 12) / objectSize.z;
+          object.scale.set(
+            scaleWidth + 0.06,
+            scaleHeight + 0.03,
+            scaleDepth + 0.06
+          );
+          var roofPos = roof.getWorldPosition();
+          object.position.x = roofPos.x;
+          object.position.y = roofPos.y;
+          object.position.z = roofPos.z;
+          self.wallMask.add(object);
+        },
+        self.onProgress,
+        self.onError
+      );
+    };
+    AppComponent.prototype.loadStyleBasicOptions = function() {
+      var _this = this;
+      if (this.configSelect.side1.dormer) {
+        if (this.configSelect.side1.dormer.length) {
+          this.loadTwoDormers();
+        } else {
+          this.loadDormerOption();
+        }
+      }
+      var self = this;
+      this.buildingOptions = [[], [], [], [], []];
+      var promise = new Promise(function(resolve, reject) {
+        _this.loadStyleBasicOptionsFromSide(0).then(function(res) {
+          _this.buildingOptions[0].push(res);
+          _this.loadStyleBasicOptionsFromSide(1).then(function(res) {
+            _this.buildingOptions[1].push(res);
+            _this.loadStyleBasicOptionsFromSide(2).then(function(res) {
+              _this.buildingOptions[2].push(res);
+              _this.loadStyleBasicOptionsFromSide(3).then(function(res) {
+                _this.buildingOptions[3].push(res);
+                if (self.selectStyle.$.sides === 5) {
+                  _this.loadStyleBasicOptionsFromSide(4).then(function(res) {
+                    _this.buildingOptions[4].push(res);
+                    resolve(_this.buildingOptions);
+                  });
+                } else {
+                  resolve(_this.buildingOptions);
+                }
+              });
+            });
+          });
+        });
+      });
+      return promise;
+    };
+    AppComponent.prototype.loadStyleBasicOptionsFromSide = function(side) {
+      side++;
+      var self = this;
+      var buildingOptions = [];
+      var options = [];
+      var totalOptions;
+      console.log(
+        'Selected side: ' + side + ' Total # of options: ' + totalOptions,
+        self.configSelect['side' + side].option
+      );
+      if (!self.configSelect['side' + side].option) {
+        totalOptions = 0;
+      } else if (!self.configSelect['side' + side].option.length) {
+        totalOptions = 1;
+        options.push(!self.configSelect['side' + side].option);
+      } else {
+        totalOptions = self.configSelect['side' + side].option.length;
+        options = self.configSelect['side' + side].options;
+      }
+      var optionsProcessed = 0;
+      var promise = new Promise(function(resolve, reject) {
+        if (totalOptions === 0) {
+          resolve();
+        } else {
+          var _loop_3 = function(i) {
+            var element = options[i];
+            switch (element.itemClass) {
+              case 'window':
+                self
+                  .loadWindowOption(
+                    side - 1,
+                    element.ordercode,
+                    element.hPosition
+                  )
+                  .then(function(loadedWindow) {
+                    var shutters = self.getElementAccessories(
+                      side,
+                      'shutter',
+                      element.position
+                    );
+                    if (shutters) {
+                      self.loadNewBuildingWindowShutters(
+                        loadedWindow,
+                        shutters.ordercode
+                      );
+                    }
+                    var flowerbox = self.getElementAccessories(
+                      side,
+                      'flowerbox',
+                      element.position
+                    );
+                    if (flowerbox) {
+                      self.loadNewBuildingWindowFlowerbox(
+                        loadedWindow,
+                        flowerbox.ordercode
+                      );
+                    }
+                    buildingOptions.push(loadedWindow);
+                    optionsProcessed++;
+                    if (optionsProcessed === totalOptions) {
+                      resolve(buildingOptions);
+                    }
+                  });
+                break;
+              case 'door':
+                console.log(
+                  '[loadStyleBasicOptionsFromSide] Loading ' + element.itemClass
+                );
+                self
+                  .loadDoorOption(
+                    'wall-' + (side - 1),
+                    element.ordercode,
+                    element.hPosition
+                  )
+                  .then(function(loadedDoor) {
+                    buildingOptions.push(loadedDoor);
+                    optionsProcessed++;
+                    if (optionsProcessed === totalOptions) {
+                      resolve(buildingOptions);
+                    }
+                  });
+                break;
+              default:
+                console.log(
+                  '[loadStyleBasicOptionsFromSide] Ignore this loading ' +
+                    element.itemClass
+                );
+                optionsProcessed++;
+                if (optionsProcessed === totalOptions) {
+                  resolve(buildingOptions);
+                }
+                break;
+            }
+          };
+          for (var i = 0; i < totalOptions; i++) {
+            _loop_3(i);
+          }
+        }
+      });
+      return promise;
+    };
+    AppComponent.prototype.getElementAccessories = function(
+      sideNo,
+      accType,
+      position
+    ) {
+      var self = this;
+      for (
+        var j = 1;
+        j <= self.configSelect['side' + sideNo].option.length;
+        j++
+      ) {
+        if (self.configSelect['side' + sideNo].option[j]) {
+          var element = self.configSelect['side' + sideNo].option[j];
+          if (element.itemClass === accType && element.position === position) {
+            return element;
+          }
+        }
+      }
+    };
+    AppComponent.prototype.loadNewBuildingWindowShutters = function(
+      targetObject,
+      ordercode
+    ) {
+      var self = this;
+      var targetSize = self.objectSize(targetObject);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/shutter/');
+      mtlLoader.load(ordercode.toLowerCase() + '_left.mtl', function(
+        materials
+      ) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/shutter/');
+        objLoader.setMaterials(materials);
+        objLoader.load(
+          ordercode.toLowerCase() + '_left.obj',
+          function(object) {
+            object.name = 'left-hutter';
+            object.position.x = -targetSize.x / 2;
+            object.position.y = -targetSize.y / 2;
+            targetObject.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+      mtlLoader.setPath('../assets/models/shutter/');
+      mtlLoader.load(ordercode.toLowerCase() + '_right.mtl', function(
+        materials
+      ) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/shutter/');
+        objLoader.setMaterials(materials);
+        objLoader.load(
+          ordercode.toLowerCase() + '_right.obj',
+          function(object) {
+            object.name = 'right-shutter';
+            object.position.x = -targetSize.x / 2;
+            object.position.y = -targetSize.y / 2;
+            targetObject.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+    };
+    AppComponent.prototype.loadNewBuildingWindowFlowerbox = function(
+      targetObject,
+      ordercode
+    ) {
+      var self = this;
+      var targetSize = self.objectSize(targetObject);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/flowerbox/');
+      mtlLoader.load(ordercode.toLowerCase() + '.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/flowerbox/');
+        objLoader.load(
+          ordercode.toLowerCase() + '.obj',
+          function(object) {
+            object.name = 'flowerbox';
+            object.position.y = -targetSize.y / 2;
+            targetObject.add(object);
+          },
+          self.onProgress,
+          self.OnError
+        );
+      });
+    };
+    AppComponent.prototype.onProgress = function(xhr) {
+      this.comparePercentage = Math.round((xhr.loaded / xhr.total) * 100);
+    };
+    AppComponent.prototype.onError = function(xhr) {
+      console.log('There was an error', xhr);
+    };
+    AppComponent.prototype.loadTerraceOption = function() {
+      console.log('Now loading terrace');
+      var self = this;
+      var firstWall = self.scene.getObjectByName('wall-0');
+      var wallPosition = firstWall.getWorldPosition();
+      var wallSize = self.objectSize(firstWall);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/terrace/');
+      mtlLoader.load('barside.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/terrace/');
+        objLoader.load(
+          'barside.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            var scaleWidth = wallSize.x / objSize.x;
+            var scaleHeight = wallSize.y / objSize.y;
+            object.scale.set(scaleWidth, scaleHeight, 1);
+            object.name = 'terrace';
+            object.position.x = wallPosition.x;
+            object.position.y = wallPosition.y;
+            object.position.z = wallPosition.z + objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+    };
+    AppComponent.prototype.loadGlenEchoAccessory = function() {
+      console.log('Now loading Glen Echo Accessory');
+      var self = this;
+      var firstWall = self.scene.getObjectByName('wall-0');
+      var wallPosition = firstWall.getWorldPosition();
+      var wallSize = self.objectSize(firstWall);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/accessories/');
+      mtlLoader.load('glen_echo_roof_acc.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/accessories/');
+        objLoader.load(
+          'glen_echo_roof_acc.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'roof-accessory';
+            object.position.x = wallPosition.x - wallSize.x / 2;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = wallPosition.z + objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        objLoader.setPath('../assets/models/accessories/');
+        objLoader.load(
+          'glen_echo_roof_acc.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'roof-accessory';
+            object.position.x = wallPosition.x + wallSize.x / 2;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = wallPosition.z + objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+    };
+    AppComponent.prototype.loadWindsorColumns = function() {
+      console.log('Now loading Windsor Columns');
+      var self = this;
+      var firstWall = self.scene.getObjectByName('wall-0');
+      var wallPosition = firstWall.getWorldPosition();
+      var wallSize = self.objectSize(firstWall);
+      var roof = self.scene.getObjectByName('roof');
+      var roofPosition = roof.getWorldPosition();
+      var roofSize = self.objectSize(roof);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/accessories/');
+      mtlLoader.load('windsor_col.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/accessories/');
+        objLoader.load(
+          'windsor_col.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'left_column';
+            object.position.x = roofPosition.x - roofSize.x / 2 + objSize.x;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = roofPosition.z + roofSize.z / 2 - objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        objLoader.load(
+          'windsor_col.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'center_column';
+            object.position.x = roofPosition.x - roofSize.x / 2 + objSize.x;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = roofPosition.z + roofSize.z / 2 - objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        objLoader.load(
+          'windsor_col.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'center1_column';
+            object.position.x = roofPosition.x - roofSize.x / 2 + objSize.x;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = roofPosition.z + roofSize.z / 2 - objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        objLoader.load(
+          'windsor_col.obj',
+          function(object) {
+            var objSize = self.objectSize(object);
+            object.name = 'right_column';
+            object.position.x = roofPosition.x - roofSize.x / 2 + objSize.x;
+            object.position.y = wallPosition.y + wallSize.y / 2 - objSize.y / 2;
+            object.position.z = roofPosition.z + roofSize.z / 2 - objSize.z / 2;
+            self.scene.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+    };
+    AppComponent.prototype.calculateSpaceOpccupiedByOptions = function(
+      options
+    ) {
+      var self = this;
+      var promise = new Promise(function(resolve, reject) {
+        var totalWidth = 0;
+        for (var i = 0; i < options.length; i++) {
+          totalWidth += self.objectSize(options[i]).x;
+        }
+        resolve(totalWidth);
+      });
+      return promise;
+    };
+    AppComponent.prototype.roofIsFlat = function() {
+      var res = false;
+      if (
+        this.selectStyle.$.name === 'Bar Harbor' ||
+        this.selectStyle.$.name === 'Urban Studio' ||
+        this.selectStyle.$.name === 'Dune'
+      ) {
+        res = true;
+      }
+      return res;
+    };
+    AppComponent.prototype.dragObject = function(event) {
+      var localMouse = new THREE.Vector2();
+      localMouse.x =
+        (event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
+      localMouse.y =
+        -(event.layerY / this.renderer.domElement.clientHeight) * 2 + 1;
+      this.raycaster.setFromCamera(localMouse, this.camera);
+      var parent = this.scene.getObjectByName('wall-' + this.currentWall);
+      var intersects = this.raycaster.intersectObjects(parent.child, true);
+      var objSize = this.objectSize(this.selectedElement);
+      var parentPosition = parent.getWorldPosition();
+      var targetBox = new THREE.Box3().setFromObject(parent);
+      var parentSize = this.objectSize(parent);
+      this.tmp = intersects[0].point.x;
+    };
+    AppComponent.prototype.onCanvasMouseMove = function(event) {};
+    AppComponent.prototype.onCanvasClickDown = function(event) {
+      var self = this;
+      this.mouse = event;
+      var intersects;
+      var localMouse = new THREE.Vector2();
+      localMouse.x =
+        (event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
+      localMouse.y =
+        -(event.layerY / this.renderer.domElement.clientHeight) * 2 + 1;
+      this.raycaster.setFromCamera(localMouse, this.camera);
+      intersects = this.raycaster.intersectObjects(this.scene.children, true);
+      var clickedObject = intersects[0].object.parent;
+      console.log('You clicked on an object: ', clickedObject.name);
+      if (
+        intersects.length !== 0 &&
+        (clickedObject.name.includes('door') ||
+          clickedObject.name.includes('window'))
+      ) {
+        if (this.selectedElement) {
+          this.removeObjectTransparency(this.selectedElement);
+        }
+        this.selectedElement = clickedObject;
+        this.addObjectTransparency(this.selectedElement);
+      } else {
+        this.controls.enabled = true;
+        this.selectedElement = null;
+        this.removeObjectTransparency(this.selectedElement);
+        this.draggingStartedAt = null;
+      }
+    };
+    AppComponent.prototype.onCanvasClickUp = function(event) {
+      this.controls.enabled = true;
+      if (this.selectedObjectColidesWithOthers()) {
+        this.selectedElement.position.x = this.draggingStartedAt.x;
+        this.selectedElement.position.y = this.draggingStartedAt.y;
+      }
+      this.draggingStartedAt = null;
+    };
+    AppComponent.prototype.isWithinBoundsOf = function(object, target) {
+      var res = false;
+      var objectBox = new THREE.Box3().setFromObject(object);
+      var targetBox = new THREE.Box3().setFromObject(target);
+      if (
+        objectBox.min.x >= targetBox.min.x &&
+        objectBox.max.x <= targetBox.max.x
+      ) {
+        res = true;
+      }
+    };
+    AppComponent.prototype.selectedObjectColidesWithOthers = function() {
+      var collisionDetected = null;
+      if (!this.selectedElement) {
+        return null;
+      }
+      var el = this.selectedElement;
+      var originPoint = el.position.clone();
+      el.size = this.objectSize(el);
+      var wallElements = this.scene.getObjectByName('wall-' + this.currentWall);
+      var objectBox = new THREE.Box3().setFromObject(el);
+      wallElements.children.forEach(function(we) {
+        var weBox = new THREE.Box3().setFromObject(el);
+        if (
+          we.uuid !== el.uuid &&
+          !we.name.includes('planks') &&
+          !we.name.includes('trim_') &&
+          weBox.intersectsBox(objectBox)
+        ) {
+          console.log('Object intersects with ' + we.name);
+          collisionDetected = true;
+        }
+      });
+      return collisionDetected;
+    };
+    AppComponent.prototype.startDraggingOption = function($event, option) {
+      this.draggedObject = option;
+    };
+    AppComponent.prototype.highlightTargets = function(option) {
+      var _this = this;
+      var targets = [];
+      var target;
+      var parent;
+      if (this.highlights.length === 0) {
+        switch (option.opt_type) {
+          case 'dormer':
+            target = this.scene.getObjectByName('roof');
+            this.highlights.push(this.highlightObject(target));
+            break;
+          case 'shutter':
+            parent = this.scene;
+            targets = this.getAllObjectsWithName('window', parent);
+            targets.forEach(function(target) {
+              _this.highlights.push(_this.highlightObject(target));
+            });
+          case 'flowerbox':
+            parent = this.scene;
+            targets = this.getAllObjectsWithName('window', parent);
+            targets.forEach(function(target) {
+              _this.highlights.push(_this.highlightObject(target));
+            });
+            break;
+          default:
+            break;
+        }
+      }
+    };
+    AppComponent.prototype.highlightObject = function(target) {
+      var outlineMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: BackSide,
+        transparent: true,
+        opacity: 0.2
+      });
+      var highlight = target.clone();
+      highlight.traverse(function(obj) {
+        if (obj instanceof Mesh) {
+          obj.material = outlineMaterial;
+        }
+      });
+      highlight.scale.multiplyScalar(1.05);
+      target.parent.add(highlight);
+      return highlight;
+    };
+    AppComponent.prototype.removeHighlights = function() {
+      this.highlights.forEach(function(h) {
+        h.parent.remove(h);
+      });
+      this.highlights = [];
+    };
+    AppComponent.prototype.getAllObjectsWithName = function(name, parent) {
+      console.log('The parent is: ', parent);
+      var res = [];
+      parent.children.forEach(function(ch) {
+        if (ch.name.includes(name)) {
+          res.push(ch);
+          console.log('Found the child element ', ch);
+        } else {
+          console.log(ch.name + ' is not the child of that parent element');
+        }
+      });
+      return res;
+    };
+    AppComponent.prototype.droppedOption = function($event, dragData) {
+      var self = this;
+      var localMouse = new THREE.Vector2();
+      localMouse.x =
+        ($event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
+      localMouse.y =
+        -($event.layerX / this.renderer.domElement.clientHeight) * 2 + 1;
+      this.raycaster.setFromCamera(localMouse, this.camera);
+      if (this.highlights.length !== 0) {
+        var placedCorrectly = false;
+        console.log('Dragging element', self.draggedObject);
+        for (var _i = 0, _a = this.highlights; _i < _a.length; _i++) {
+          var highlight = _a[_i];
+          var intersects = this.raycaster.intersectObjects(
+            highlight.children,
+            true
+          );
+          console.log('This element intersects with: ', intersects);
+          if (intersects.length !== 0) {
+            placedCorrectly = true;
+            switch (self.draggedObject.opt_type) {
+              case 'flowerbox':
+                this.loadFlowerboxOption(
+                  highlight,
+                  self.draggedObject.order_code
+                );
+                break;
+              case 'shutter':
+                this.loadShutterOption(
+                  highlight,
+                  self.draggedObject.order_code
+                );
+                break;
+              default:
+                break;
+            }
+          }
+        }
+        if (!placedCorrectly) {
+          alert('You should place this in the highlighted section instead');
+        }
+      } else {
+        this.loadDroppedOption($event, dragData, this.scale);
+      }
+    };
+    AppComponent.prototype.loadDroppedOption = function(
+      $event,
+      object,
+      targetObject
+    ) {
+      var self = this;
+      var localMouse = new THREE.Vector2();
+      localMouse.x =
+        ($event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
+      localMouse.y =
+        -($event.layerY / this.renderer.domElement.clientHeight) * 2 + 1;
+      this.raycaster.setFromCamera(localMouse, this.camera);
+      var targetSize = self.objectSize(targetObject);
+      var intersects = this.raycaster.intersectObjects(
+        targetObject.children,
+        true
+      );
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath(
+        '../assets/models/' + self.draggedObject.opt_type + '/'
+      );
+      mtlLoader.load(
+        self.draggedObject.order_code.toLowerCase() + '.mtl',
+        function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath(
+            '../assets/models/' + self.draggedObject.opt_type + '/'
+          );
+          objLoader.load(
+            self.draggedObject.order_code.toLowerCase() + '.obj',
+            function(object) {
+              object.name = name;
+              object.position.x = 0;
+              object.position.y = 0;
+              object.position.z = 3.08;
+              targetObject.add(object);
+            },
+            function(xhr) {
+              self.comparePercentage = Math.round(
+                (xhr.loaded / xhr.total) * 100
+              );
+              console.log(self.comparePercentage + '% compvare');
+            },
+            function(error) {
+              console.log('There was an error');
+            }
+          );
+        }
+      );
+    };
+    AppComponent.prototype.allowDrop = function(event) {
+      event.preventDefault();
+    };
+    AppComponent.prototype.init3DScene = function() {
+      var view = {
+        angle: 45,
+        aspect: screen.width / screen.height,
+        near: 0.1,
+        far: 1000
+      };
+      var ambientLight = new THREE.AmbientLight(0x404040);
+      var directionalLight1 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight2 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight3 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight4 = new THREE.DirectionalLight(0xc0c090);
+      directionalLight1.position.set(-100, -50, 100);
+      directionalLight2.position.set(100, 50, -100);
+      directionalLight3.position.set(100, -50, -100);
+      directionalLight4.position.set(-100, 50, 100);
+      directionalLight3.intensity = 0.5;
+      directionalLight4.intensity = 0.5;
+      this.scene.add(ambientLight);
+      this.scene.add(directionalLight1);
+      this.scene.add(directionalLight2);
+      this.scene.add(directionalLight3);
+      this.scene.add(directionalLight4);
+      var ambientLight2 = new THREE.AmbientLight(0x404040);
+      var directionalLight2_1 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight2_2 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight2_3 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight2_4 = new THREE.DirectionalLight(0xc0c090);
+      directionalLight2_1.position.set(-100, -50, 100);
+      directionalLight2_2.position.set(100, 50, -100);
+      directionalLight2_3.position.set(100, -50, -100);
+      directionalLight2_4.position.set(-100, 50, 100);
+      directionalLight2_3.intensity = 0.5;
+      directionalLight2_4.intensity = 0.5;
+      this.roof.add(ambientLight2);
+      this.roof.add(directionalLight2_1);
+      this.roof.add(directionalLight2_2);
+      this.roof.add(directionalLight2_3);
+      this.roof.add(directionalLight2_4);
+      var ambientLight3 = new THREE.AmbientLight(0x404040);
+      var directionalLight3_1 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight3_2 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight3_3 = new THREE.DirectionalLight(0xc0c090);
+      var directionalLight3_4 = new THREE.DirectionalLight(0xc0c090);
+      directionalLight3_1.position.set(-100, -50, 100);
+      directionalLight3_2.position.set(100, 50, -100);
+      directionalLight3_3.position.set(100, -50, -100);
+      directionalLight3_4.position.set(-100, 50, 100);
+      directionalLight3_3.intensity = 0.5;
+      directionalLight3_4.intensity = 0.5;
+      this.roofOptions.add(ambientLight3);
+      this.roofOptions.add(directionalLight3_1);
+      this.roofOptions.add(directionalLight3_2);
+      this.roofOptions.add(directionalLight3_3);
+      this.roofOptions.add(directionalLight3_4);
+      this.camera.position.set(0.0, 0.0, 200.0);
+      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      this.scene.add(this.camera);
+      this.renderer.setSize(this.viewport.width, this.viewport.height);
+      this.renderer.sortObjects = true;
+      this.renderer.autoClear = false;
+      this.container.appendChild(this.renderer.domElement);
+      var r = '../assets/threeTextures/cube/' + this.currentBG + '/';
+      var urls = [
+        r + 'posx.jpg',
+        r + 'negx.jpg',
+        r + 'posy.jpg',
+        r + 'negy.jpg',
+        r + 'posz.jpg',
+        r + 'negz.jpg'
+      ];
+      this.textureCube = new THREE.CubeTextureLoader().load(urls);
+      this.textureCube.mapping = THREE.CubeRefractionMapping;
+      this.createMaterials();
+      this.glassMaterial = new THREE.MeshPhongMaterial({
+        color: 0xccddff,
+        envMap: this.textureCube,
+        flatShading: true,
+        refractionRatio: 0.98,
+        reflectivity: 0.3
+      });
+      this.planeHelp.visible = false;
+      this.scene.add(this.planeHelp);
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.25;
+      this.controls.enableZoom = true;
+      this.controls.maxPolarAngle = Math.PI / 2;
+      this.render();
+    };
+    AppComponent.prototype.createGround = function() {
+      var texture = new THREE.TextureLoader().load(
+        '../assets/textures/grass.jpg'
+      );
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      var groundMaterial = new THREE.MeshLambertMaterial({
+        flatShading: true,
+        map: texture,
+        reflectivity: 0.1
+      });
+      var groundGeometry = new THREE.BoxGeometry(800, 5, 800);
+      var ground = new THREE.Mesh(groundGeometry, groundMaterial);
+      ground.name = 'ground';
+      ground.position.y = -Number(this.configSelect.style.heightStyle);
+      console.log('The position of the ground is ' + ground.position.y);
+      this.scene.add(ground);
+    };
+    AppComponent.prototype.createMaterials = function() {
+      this.createMaterialCedarSiding();
+      this.createMaterialCedarElement();
+    };
+    AppComponent.prototype.createMaterialCedarSiding = function() {
+      var texture = new THREE.TextureLoader().load(
+        '../assets/textures/cedar3.jpg'
+      );
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      this.createMaterialCedarSiding = new THREE.MeshLambertMaterial({
+        flatShading: true,
+        map: texture,
+        reflectivity: 0.1
+      });
+    };
+    AppComponent.prototype.createMaterialCedarElement = function() {
+      var texture = new THREE.TextureLoader().load(
+        '../assets/textures/cedar-element.jpg'
+      );
+      this.materialCedarElement = new THREE.MeshLambertMaterial({
+        flatShading: true,
+        map: texture,
+        reflectivity: 0.1
+      });
+    };
+    AppComponent.prototype.addCubeMap = function() {
+      var skyGeometry = new BoxGeometry(1024, 1024, 1024);
+      var directions = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'];
+      var materialArray = [];
+      for (var i = 0; i < 6; i++) {
+        materialArray.push(
+          new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture(
+              '../assets/threeTextures/cube/' +
+                this.currentBG +
+                '/' +
+                directions[i] +
+                '.jpg'
+            ),
+            side: THREE.BackSide
+          })
+        );
+      }
+      var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+      var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+      skyBox.name = 'skybox';
+      this.sceneBg.add(skyBox);
+    };
+    AppComponent.prototype.changeBackground = function() {
+      console.log('Changing the background: ' + this.currentBG);
+      var box = this.scene.getObjectByName('skybox');
+      this.sceneBg.remove(box);
+      this.addCubeMap();
+    };
+    AppComponent.prototype.changeSidingsTexture = function(
+      objectName,
+      newTexture
+    ) {
+      var self = this;
+      var _loop_4 = function(i) {
+        var textureName = newTexture.order_code;
+        var texture = new THREE.TextureLoader().load(
+          '/assets/textures/' + textureName + '.jpg'
+        );
+        texture.repeat.set(1, 1);
+        var sidingMaterial = new THREE.MeshLambertMaterial({
+          flatShading: true,
+          map: texture,
+          reflectivity: 0.1
+        });
+        var newMaterial = new THREE.MeshLambertMaterial({
+          map: texture,
+          reflectivity: 0.1
+        });
+        object = this_1.scene.getObjectByName('wall-' + (i - 1));
+        object.children.forEach(function(child) {
+          if (child instanceof THREE.Mesh && child.name.includes('planks')) {
+            child.material = newMaterial;
+            console.log('Changing the texture for object ', child.name);
+          }
+        });
+      };
+      var this_1 = this,
+        texture,
+        object;
+      for (var i = 1; i <= self.selectStyle.$.sides; i++) {
+        _loop_4(i);
+      }
+    };
+    AppComponent.prototype.changeTrimTexture = function(newTexture) {
+      var self = this;
+      this.scene.children.forEach(function(child) {
+        child.children.forEach(function(el) {
+          if (el instanceof THREE.Mesh && el.name.includes('trim')) {
+            var textureName = newTexture.order_code;
+            var texture = new THREE.TextureLoader().load(
+              '../assets/textures/' + textureName + '.jpg'
+            );
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            var newMaterial = new THREE.MeshLambertMaterial({
+              map: texture,
+              reflectivity: 0.1
+            });
+            el.material = newMaterial;
+          }
+        });
+      });
+    };
+    AppComponent.prototype.render = function() {
+      var self = this;
+      (function render() {
+        requestAnimationFrame(render);
+        self.renderer.render(self.sceneBg, self.camera);
+        self.renderer.render(self.roofOptions, self.camera);
+        self.renderer.context.colorMask(false, false, false, false);
+        self.renderer.render(self.roofMask, self.camera);
+        self.renderer.context.colorMask(true, true, true, true);
+        self.renderer.render(self.roof, self.camera);
+        self.renderer.context.colorMask(false, false, false, false);
+        self.renderer.render(self.wallMask, self.camera);
+        self.renderer.context.colorMask(true, true, true, true);
+        self.renderer.render(self.scene, self.camera);
+        var vector = self.camera.getWorldDirection(new THREE.Vector3());
+        self.cameraAngle = THREE.Math.radToDeg(Math.atan2(vector.x, vector.z));
+        self.cameraAngle = Math.round(self.cameraAngle);
+        if (
+          (self.cameraAngle > 115 && self.cameraAngle < 180) ||
+          (self.cameraAngle > -180 && self.cameraAngle < -135)
+        ) {
+          self.currentWall = 0;
+        }
+        if (self.cameraAngle < 105 && self.cameraAngle > 35) {
+          self.currentWall = 1;
+        }
+        if (self.cameraAngle > -105 && self.cameraAngle < -45) {
+          self.currentWall = 3;
+        }
+        if (
+          (self.cameraAngle > -25 && self.cameraAngle <= 0) ||
+          (self.cameraAngle >= 0 && self.cameraAngle < 55)
+        ) {
+          self.currentWall = 2;
+        }
+      })();
+    };
+    AppComponent.prototype.addObjectTransparency = function(object) {
+      this.selectedElement.children.forEach(function(el) {
+        if (el.type === 'Mesh') {
+          el.material.transparent = true;
+          el.material.opacity = 0.7;
+        }
+      });
+    };
+    AppComponent.prototype.removeObjectTransparency = function(object) {
+      object.children.forEach(function(el) {
+        if (el.type === 'Mesh') {
+          el.material.transparent = false;
+          el.material.opacity = 1;
+        }
+      });
+    };
+    AppComponent.prototype.removeSelectedElement = function() {
+      console.log('devaring ', this.selectedElement);
+      var parent = this.selectedElement.parent;
+      parent.remove(this.selectedElement);
+      this.selectedElement = null;
+    };
+    AppComponent.prototype.toggleProductStyleStates = function() {
+      this.stylesDrawerState =
+        this.stylesDrawerState === 'active' ? 'inactive' : 'active';
+    };
+    AppComponent.prototype.showSidings = function() {
+      this.drawerStateSide = 'active';
+    };
+    AppComponent.prototype.closeSidingsDrawer = function() {
+      this.drawerStateSide = 'inactive';
+    };
+    AppComponent.prototype.showTrim = function() {
+      this.drawerStateTrim = 'active';
+    };
+    AppComponent.prototype.closeTrimDrawer = function() {
+      this.drawerStateTrim = 'inactive';
+    };
+    AppComponent.prototype.showOptions = function(category) {
+      var _this = this;
+      this.optCatSelect = category;
+      this._prodServ.getCategoryOptions(category.id).subscribe(function(res) {
+        _this.availableOptions = [];
+        res.forEach(function(opt) {
+          opt['image'] =
+            '/assets/thumbnails/' +
+            opt.opt_type +
+            '/' +
+            opt.order_code.toLowerCase() +
+            '.png';
+          _this.availableOptions.push(opt);
+        });
+      });
+      this.drawerStateOpt = 'active';
+    };
+    AppComponent.prototype.closeOptions = function() {
+      this.drawerStateOpt = 'inactive';
+    };
+    AppComponent.prototype.loadTwoDormers = function() {
+      var self = this;
+      var targetObject = self.roof.getObjectByName('roof');
+      var targetPos = targetObject.getWorldPosition();
+      var targetSize = self.objectSize(targetObject);
+      var roofSize = self.objectSize(targetObject).x;
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models.dormer/');
+      mtlLoader.load('dormer_1.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/dormer/');
+        objLoader.setMaterials(materials);
+        objLoader.load(
+          'dormer_2.obj',
+          function(object) {
+            object.name = 'dormer';
+            var objectSize = self.objectSize(object);
+            object.position.x = targetPos.x - roofSize / 4;
+            object.position.y =
+              targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+            object.position.z =
+              targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+            self.roofOptions.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        objLoader.load(
+          'dormer_mask.obj',
+          function(object) {
+            object.name = 'dormer_mask';
+            var objectSize = self.objectSize(object);
+            object.traverse(function(child) {
+              if (child instanceof THREE.Mesh) {
+                child.material = self.matSelect;
+              }
+            });
+            object.position.x = targetPos.x - roofSize / 4;
+            object.position.y =
+              targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+            object.position.z =
+              targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+            self.roofMask.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+        mtlLoader.load('dormer_2.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/models/dormer/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            'dormer_2.obj',
+            function(object) {
+              object.name = 'dormer';
+              var objectSize = self.objectSize(object);
+              object.position.x = targetPos.x - roofSize / 4;
+              object.position.y =
+                targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+              object.position.z =
+                targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+              self.roofOptions.add(object);
+            },
+            self.onProgress,
+            self.onError
+          );
+          objLoader.load(
+            'dormer_mask.obj',
+            function(object) {
+              object.name = 'dormer_mask';
+              var objectSize = self.objectSize(object);
+              object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = self.matSelect;
+                }
+              });
+              object.position.x = targetPos.x - roofSize / 4;
+              object.position.y =
+                targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+              object.position.z =
+                targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+              self.roofMask.add(object);
+            },
+            self.onProgress,
+            self.onError
+          );
+        });
+      });
+    };
+    AppComponent.prototype.loadDormerOption = function() {
+      var self = this;
+      var targetObject = self.roof.getObjectByName('roof');
+      var targetPos = targetObject.getWorldPosition();
+      var targetSize = self.objectSize(targetObject);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('../assets/models/dormer/');
+      mtlLoader.load('dormer_2.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('../assets/models/dormer/');
+        objLoader.setMaterials(materials);
+        objLoader.load(
+          'dormer_2.obj',
+          function(object) {
+            object.name = 'dormer';
+            var objectSize = self.objectSize(object);
+            object.position.x = targetPos.x;
+            object.position.y =
+              targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+            object.position.z =
+              targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+            self.roofOptions.add(object);
+          },
+          function(xhr) {
+            self.comparePercentage = Math.round((xhr.loaded / xhr.total) * 100);
+          },
+          function(error) {
+            console.log('There was an error');
+          }
+        );
+        objLoader.load(
+          'dormer_mask.obj',
+          function(object) {
+            object.name = 'dormer_mask';
+            var objectSize = self.objectSize(object);
+            object.traverse(function(child) {
+              if (child instanceof THREE.Mesh) {
+                child.material = self.matSelect;
+              }
+            });
+            object.position.x = targetPos.x;
+            object.position.y =
+              targetPos.y - targetSize.y / 2 + objectSize.y / 2;
+            object.position.z =
+              targetPos.z + targetSize.z / 2 - objectSize.z / 2;
+            self.roofMask.add(object);
+          },
+          self.onProgress,
+          self.onError
+        );
+      });
+    };
+    AppComponent.prototype.getCompoundBoundingBox = function(object3D) {
+      var box = null;
+      object3D.traverse(function(obj3D) {
+        var geometry = obj3D.geometry;
+        if (geometry === undefined) {
+          return;
+        }
+        geometry.computeBoundingBox();
+        if (box === null) {
+          box = geometry.boundingBox;
+        } else {
+          box.union(geometry.boundingBox);
+        }
+      });
+      return box;
+    };
+    AppComponent.prototype.loadWindowOption = function(
+      side,
+      order_code,
+      position
+    ) {
+      var self = this;
+      var targetObject = self.scene.getObjectByName('wall-' + side);
+      var targetPos = targetObject.getWorldPosition();
+      var targetSize = self.objectSize(targetObject);
+      var promise = new Promise(function(resolve, reject) {
+        var mtlLoader = new MTLLoader();
+        mtlLoader.setPath('../assets/models/window/');
+        mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/model/window/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            order_code.toLowerCase() + '.obj',
+            function(object) {
+              object.name = 'window-' + position;
+              var pos = self.calculateWindowPosition(
+                side,
+                object,
+                position,
+                targetObject
+              );
+              object.position.x = pos.x;
+              object.position.y = pos.y;
+              object.position.z = pos.z;
+              var scaleHeight;
+              if (self.configSelect.cdcCustomData.wallsHeightRatio !== 1) {
+                scaleHeight =
+                  1 / self.configSelect.cdcCustomData.wallsHeightRatio;
+              } else {
+                scaleHeight = 7.875 / self.configSelect.height;
+              }
+              object.scale.set(1, scaleHeight, 1);
+              object.traverse(function(child) {
+                if (
+                  child instanceof THREE.Mesh &&
+                  child.name.includes('glass')
+                ) {
+                  child.material = self.glassMaterial;
+                }
+              });
+              targetObject.add(object);
+              resolve(object);
+            },
+            function(xhr) {
+              self.comparePercentage = Math.round(
+                (xhr.loaded / xhr.total) * 100
+              );
+            },
+            function(error) {
+              console.log('There was an error');
+            }
+          );
+        });
+      });
+      return promise;
+    };
+    AppComponent.prototype.calculateWindowPosition = function(
+      side,
+      object,
+      position,
+      targetObj
+    ) {
+      var targetPos = targetObj.getWorldPosition();
+      var targetSize = this.objectSize(targetObj);
+      var objectSize = this.objectSize(object);
+      var objectPos = { x: 0, y: 0, z: 4.2 };
+      switch (position) {
+        case 'center':
+          objectPos.x = 0;
+          break;
+        case 'left':
+          objectPos.x = -(targetSize.x / 3);
+          break;
+        case 'right':
+          objectPos.x = targetSize.x / 3;
+          break;
+        default:
+          alert('This not a normal position: ' + position);
+          break;
+      }
+      return objectPos;
+    };
+    AppComponent.prototype.loadFlowerboxOption = function(
+      targetObject,
+      order_code
+    ) {
+      var self = this;
+      var targetPos = targetObject.getWorldPosition();
+      var targetSize = self.objectSize(targetObject);
+      var mtlLoader = new MTLLoader();
+      mtlLoader.setPath('/assets/models/flowerbox/');
+      mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setPath('/assets/models/flowerbox/');
+        objLoader.setMaterials(materials);
+        objLoader.load(
+          order_code.toLowerCase() + '.obj',
+          function(object) {
+            object.name = 'flowerbox';
+            object.position.z = 3.5;
+            targetObject.add(object);
+            console.log(
+              'After loading the flowbox, this is the target object:  ',
+              targetObject
+            );
+            self.render();
+          },
+          function(xhr) {
+            self.comparePercentage = Math.round((xhr.loaded / xhr.total) * 100);
+          },
+          function(error) {
+            console.log('There was an error');
+          }
+        );
+      });
+    };
+    AppComponent.prototype.loadRoofingOptions = function() {
+      var self = this.this.configSelect.general.option.forEach(function(
+        option
+      ) {
+        if (option) {
+          if (option) {
+            if (option.itemClass === 'cupola') {
+              var roof = self.roof.getObjectByName('roof');
+              var targetObject = self.roof.getObjectByName('roof');
+              var roofPosition_1 = targetObject.getWorldPosition();
+              var roofSize_1 = self.objectSize(roof);
+              var order_code_1 = option.ordercode;
+              var mtlLoader = new MTLLoader();
+              mtlLoader.setPath('/assets/models/roofing/');
+              mtlLoader.load(order_code_1.toLowerCase() + '.mtl', function(
+                materials
+              ) {
+                materials.preload();
+                var objLoader = new OBJLoader();
+                objLoader.setPath('/assets/models/roofing/');
+                objLoader.setMaterials(materials);
+                objLoader.load(
+                  order_code_1.toLowerCase() + '.obj',
+                  function(object) {
+                    var objectSize = self.objectSize(object);
+                    object.name = option.itemClass;
+                    object.position.x = roofPosition_1.x;
+                    object.position.y =
+                      roofPosition_1.y + roofSize_1.y / 2 + objectSize.y / 3;
+                    object.position.z = roofPosition_1.z;
+                    self.scene.add(object);
+                  },
+                  self.onProgress,
+                  self.onError
+                );
+              });
+            }
+          }
+        }
+      });
+    };
+    AppComponent.prototype.loadShutterOption = function(target, order_code) {
+      var self = this;
+      var targetObject = self.getAllObjectsWithName('window', target);
+      console.log('Shutters Target window', targetObject);
+    };
+    AppComponent.prototype.loadDoorOption = function(
+      target,
+      order_code,
+      position
+    ) {
+      var self = this;
+      var targetObject = self.scene.getObjectByName(target);
+      var targetPos = targetObject.getWorldPosition();
+      var targetSize = self.objectSize(targetObject);
+      var promise = new Promise(function(resolve, reject) {
+        var mtlLoader = new MTLLoader();
+        mtlLoader.setPath('../assets/models/door/');
+        mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
+          materials.preload();
+          var objLoader = new OBJLoader();
+          objLoader.setPath('../assets/models/door/');
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            order_code.toLowerCase() + '.obj',
+            function(object) {
+              object.name = 'door-' + position;
+              var pos = self.calculateDoorPosition(
+                object,
+                position,
+                targetObject
+              );
+              object.position.x = pos.x;
+              object.position.y = pos.y;
+              object.position.z = pos.z;
+              var scaleHeight;
+              if (self.configSelect.cdcCustomData.wallsHeightRatio !== 1) {
+                scaleHeight =
+                  1 / self.configSelect.cdcCustomData.wallsHeightRatio;
+              } else {
+                scaleHeight = 7.875 / self.configSelect.height;
+              }
+              object.scale.set(1, scaleHeight, 1);
+              object.traverse(function(child) {
+                if (
+                  child instanceof THREE.Mesh &&
+                  child.name.includes('glass')
+                ) {
+                  child.material = self.glassMaterial;
+                }
+              });
+              targetObject.add(object);
+              resolve(object);
+            },
+            self.onProgress,
+            self.onError
+          );
+        });
+      });
+      return promise;
+    };
+    AppComponent.prototype.calculateDoorPosition = function(
+      object,
+      position,
+      targetObj
+    ) {
+      var targetPos = targetObj.getWorldPosition();
+      var targetSize = this.objectSize(targetObj);
+      var objectSize = this.objectSize(object);
+      var objectPos = {
+        x: 0,
+        y: -(targetSize.y / 2) + objectSize.y / 2,
+        z: 2.5
+      };
+      switch (position) {
+        case 'center':
+          objectPos.x = 0;
+          break;
+        case 'left':
+          objectPos.x = targetSize.x / 3;
+          break;
+        case 'right':
+          objectPos.x = -targetSize.x / 3;
+          break;
+        default:
+          objectPos = { x: 0, y: 0, z: 0 };
+          alert('This is not a normal position: ' + position);
+          break;
+      }
+      return objectPos;
+    };
+    AppComponent.prototype.objectSize = function(obj) {
+      var size = { x: 0, y: 0, z: 0 };
+      var xxx = new THREE.Box3().setFromObject(obj);
+      size.x = xxx.max.x - xxx.min.x;
+      size.y = xxx.max.y - xxx.min.y;
+      size.z = xxx.max.z - xxx.min.z;
+      return size;
+    };
+    AppComponent.prototype.objectPosition = function(obj) {
+      var position = { x: 0, y: 0, z: 0 };
+      var xxx = new THREE.Box3().setFromObject(obj);
+      position.x = xxx.max.x - xxx.min.x;
+      position.y = xxx.max.y - xxx.min.y;
+      position.z = xxx.max.z - xxx.min.z;
+      return position;
+    };
+    AppComponent.prototype.clearStage = function() {
+      var self = this;
+      var promise = new Promise(function(resolve, reject) {
+        var children = self.scene.children.filter(function(element) {
+          return (
+            element.name !== '' &&
+            element.name !== 'ground' &&
+            element.name !== 'skybox'
+          );
+        });
+        children.forEach(function(ch) {
+          self.scene.remove(ch);
+        });
+        var roofChildren = self.roof.children.filter(function(element) {
+          return (
+            element.type !== 'DirectionalLight' &&
+            element.type !== 'AmbientLight'
+          );
+        });
+        roofChildren.forEach(function(ch) {
+          self.roof.remove(ch);
+        });
+        var roofOptionsChildren = self.roofOptions.children.filter(function(
+          element
+        ) {
+          return (
+            element.type !== 'DirectionalLight' &&
+            element.type !== 'AmbientLight'
+          );
+        });
+        roofOptionsChildren.forEach(function(ch) {
+          self.roofOptions.remove(ch);
+        });
+        while (self.roofMask.children.length > 0) {
+          self.roofMask.remove(self.roofMask.children[0]);
+        }
+        while (self.wallMask.children.length > 0) {
+          self.wallMask.remove(self.wallMask.children[0]);
+        }
+        resolve('Cleared successfully');
+      });
+      return promise;
+    };
+    AppComponent.prototype.changeCategory = function(newCategory) {
+      this.catSelect = newCategory;
+    };
+    AppComponent.prototype.onProductStyleClicked = function(style) {
+      var _this = this;
+      this.selectStyle = style;
+      if (!Array.isArray(style.overhang)) {
+        this.selectStyle.overhang = [style.overhang];
+      }
+      console.log('[App Component] Style selected', style);
+      this._prodServ.getProductConfiguration(style.$.defaultConfig).subscribe(
+        function(res) {
+          _this.configSelect = res;
+          if (!Array.isArray(res.general.option)) {
+            _this.configSelect.general.option = [res.general.option];
+          }
+          console.log('Selected product', _this.configSelect);
+          _this.clearStage().then(function() {
+            console.log('Stage cleared');
+            _this.loadNewBuilding();
+          });
+        },
+        function(err) {
+          console.log('Error loading configuration!' + err);
+        }
+      );
+    };
+    AppComponent.prototype.onBaseProductClicked = function(category) {
+      this.catSelect = category;
+    };
+    AppComponent.prototype.onProductSizeChanged = function() {
+      console.log('this.shedSize', this.shedSize);
+      var building = this.shedSize.split('x');
+      this.configSelect.width = Number(building[1]) * 12;
+      this.configSelect.depth = Number(building[0]) * 12;
+      this.clearStage();
+      this.loadNewBuilding();
+    };
+    AppComponent.prototype.setViewport = function() {
+      var container = document.getElementById('renderer_container');
+      this.viewport.width = container.clientWidth;
+      this.viewport.height = window.innerHeight * 0.7;
+    };
+    AppComponent.prototype.takeScreenshot = function() {
+      var w = window.open('', '');
+      w.document.title = 'SummerwoodDesign.png';
+      var img = new Image();
+      this.renderer.render(this.scene, this.camera);
+      img.src = this.renderer.domElement.toDataURL();
+      var a = document.createElement('a');
+      a.href = this.renderer.domElement
+        .toDataURL()
+        .replace('image/png', 'image/octet-stream');
+      a.download = 'SummerwoodDesign.png';
+      a.click();
+    };
+    AppComponent.prototype.shareOnFacebook = function() {
+      var img = new Image();
+      this.renderer.render(this.scene, this.camera);
+      img.src = this.renderer.domElement.toDataURL();
+      var formData = new FormData();
+      formData.append('upload_preset', 'ojfipqhx');
+      formData.append('file', img.src);
+      var headers = new Headers();
+      headers.append('X-Requested-With', 'XMLHttpRequest');
+      this.http
+        .post(
+          'https://api.cloudinary.com/v1_1/pervasive/image/upload',
+          formData,
+          { headers: headers }
+        )
+        .subscribe(function(data) {
+          var info = data.json();
+          window.open(
+            'http://www.facebook.com/sharer.php?u=' + info.url,
+            'Write your message here',
+            'width=500, height=500, scrollbars=yes, resizable=no'
+          );
+        });
+    };
+    AppComponent.prototype.shareOnTwitter = function() {
+      var text = "Come check out what I've made over at https://Summerwood.com";
+      var img = new Image();
+      this.renderer.render(this.scene, this.camera);
+      var formData = new FormData();
+      formData.append('upload_preset', 'ojfipqhx');
+      formData.append('file', img.src);
+      var headers = new Headers();
+      headers.append('X-Requested-With', 'XMLHttpRequest');
+      this.http
+        .post(
+          'https://api.cloudinary.com/v1_1/pervasive/image/upload',
+          formData,
+          { headers: headers }
+        )
+        .subscribe(function(data) {
+          var info = data.json();
+          window.open(
+            'http://twitter.com/share?url=' +
+              encodeURIComponent(info.url) +
+              '&text=' +
+              encodeURIComponent(text),
+            '',
+            'left=0,top=0,width=550,height=450,personalbar=0,toolbar=0,scrollbars=0,resizable=0'
+          );
+        });
+    };
+    AppComponent.prototype.onBackgroundUploadFinished = function(file) {
+      console.log('Image has been uploaded', file.src);
+      this.useCustomerBackground(file.src);
+    };
+    AppComponent.prototype.onBackgroundRemoved = function(file) {
+      console.log(file);
+    };
+    AppComponent.prototype.onBackgroundUploadStateChanged = function(state) {
+      console.log('New file uploaded', state);
+    };
+    AppComponent.prototype.useCustomerBackground = function(file) {
+      var skyGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
+      var box = this.scene.getObjectByName('skybox');
+      this.scene.remove(box);
+      var textures = [
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'posx' + '.jpg',
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'negx' + '.jpg',
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'posy' + '.jpg',
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'negy' + '.jpg',
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'posz' + '.jpg',
+        '/assets/threetextures/cube/' + this.currentBG + '/' + 'negz' + '.jpg'
+      ];
+      var materialArray = [];
+      for (var i = 0; i < 6; i++) {
+        materialArray.push(
+          new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture(textures[i]),
+            side: THREE.BackSide
+          })
+        );
+      }
+      materialArray[5] = new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture(file),
+        side: THREE.BackSide
+      });
+      var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+      var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+      skyBox.name = 'skybox';
+      this.scene.add(skyBox);
+    };
+    AppComponent.prototype.useCustomerBackground2 = function(file) {
+      var skyGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
+      var box = this.scene.getObjectByName('skybox');
+      this.scene.remove(box);
+      var materialArray = [];
+      for (var i = 0; i < 6; i++) {
+        materialArray.push(
+          new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture(file),
+            side: THREE.BackSide
+          })
+        );
+      }
+      var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+      var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+      skyBox.name = 'skybox';
+      this.scene.add(skyBox);
+    };
+    __decorate(
+      [
+        ViewChild('container', { static: false }),
+        __metadata('design:type', 'ElementRef')
+      ],
+      AppComponent.prototype,
+      'elementRef',
+      void 0
+    );
+    __metadata('design:paramtypes', ProductService, UtilitiesService, Http);
+  })();
+}

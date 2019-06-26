@@ -41,12 +41,4 @@
     crossorigin="anonymous"
   ></script>
   <script src="https://kit.fontawesome.com/4ec69c0cde.js"></script>
-  <script>
-    window.addEventListener('resize', onWindowResize, false);
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-  </script>
 </html>
