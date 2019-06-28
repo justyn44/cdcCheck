@@ -275,8 +275,10 @@ export class AppComponent {
     this.optionsCategories = this._productService.getOptionsCategories();
     this.sidingOptions = this._productService.getSidingOptions();
     this.trimOptions = this._productService.getTrimOptions();
-    this.container = this.elementRef.nativeElement;
     this.setViewport();
+  }
+  ngAfterViewInit() {
+    this.container = this.elementRef.nativeElement;
     this.init3DScene();
   }
   loadNewBuilding() {
@@ -440,11 +442,11 @@ export class AppComponent {
     var loader = new THREE.OBJLoader(manager);
     let promise = new Promise(function(resolve, reject) {
       var mtlLoader = new MTLLoader();
-      mtlLoader.setPath('/assets/models/wall/horizontal/');
+      mtlLoader.setPath('../assets/models/wall/horizontal/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
         var objLoader = new THREE.OBJLoader();
-        objLoader.setPath('/assets/models/wall/horizontal/');
+        objLoader.setPath('../assets/models/wall/horizontal/');
         objLoader.setMaterials(materials);
         objLoader.load(
           filename + '.obj',
@@ -522,11 +524,11 @@ export class AppComponent {
     let filename = this.selectedConfiguration.style.styleName;
     let promise = new Promise(function(resolve, reject) {
       var mtlLoader = new MTLLoader();
-      mtlLoader.setPath('/assets/models/roof/');
+      mtlLoader.setPath('../assets/models/roof/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
         var objLoader = new THREE.OBJLoader();
-        objLoader.setPath('/assets/models/roof/');
+        objLoader.setPath('../assets/models/roof/');
         objLoader.setMaterials(materials);
         objLoader.load(
           filename + '.obj',
@@ -628,7 +630,7 @@ export class AppComponent {
   loadWallMask(position, objSize) {
     let self: AppComponent = this;
     var objLoader = new THREE.OBJLoader();
-    objLoader.setPath('/assets/models/wallmasks/');
+    objLoader.setPath('../assets/models/wallmasks/');
     const filename = self.selectedStyle.$.name + '.obj';
     let roof = self.sceneRoof.getObjectByName('roof');
     objLoader.load(
@@ -815,11 +817,11 @@ export class AppComponent {
     let self: AppComponent = this;
     let targetSize = self.objectSize(targetObject);
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/shutter/');
+    mtlLoader.setPath('../assets/models/shutter/');
     mtlLoader.load(ordercode.toLowerCase() + '_left.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/shutter/');
+      objLoader.setPath('../assets/models/shutter/');
       objLoader.setMaterials(materials);
       objLoader.load(
         ordercode.toLowerCase() + '_left.obj',
@@ -836,7 +838,7 @@ export class AppComponent {
     mtlLoader.load(ordercode.toLowerCase() + '_right.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/shutter/');
+      objLoader.setPath('../assets/models/shutter/');
       objLoader.setMaterials(materials);
       objLoader.load(
         ordercode.toLowerCase() + '_right.obj',
@@ -855,11 +857,11 @@ export class AppComponent {
     let self: AppComponent = this;
     let targetSize = self.objectSize(targetObject);
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/flowerbox/');
+    mtlLoader.setPath('../assets/models/flowerbox/');
     mtlLoader.load(ordercode.toLowerCase() + '.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/flowerbox/');
+      objLoader.setPath('../assets/models/flowerbox/');
       objLoader.setMaterials(materials);
       objLoader.load(
         ordercode.toLowerCase() + '.obj',
@@ -887,12 +889,12 @@ export class AppComponent {
     let wallSize = self.objectSize(firstWall);
 
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/terrace/');
+    mtlLoader.setPath('../assets/models/terrace/');
     mtlLoader.load('barside.mtl', function(materials) {
       materials.preload();
 
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/terrace/');
+      objLoader.setPath('../assets/models/terrace/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -925,12 +927,12 @@ export class AppComponent {
     let wallSize = self.objectSize(firstWall);
 
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/accessories/');
+    mtlLoader.setPath('../assets/models/accessories/');
     mtlLoader.load('glen_echo_roof_accessory.mtl', function(materials) {
       materials.preload();
 
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/accessories/');
+      objLoader.setPath('../assets/models/accessories/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -976,12 +978,12 @@ export class AppComponent {
     let roofSize = self.objectSize(roof);
 
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/accessories/');
+    mtlLoader.setPath('../assets/models/accessories/');
     mtlLoader.load('windsor_column.mtl', function(materials) {
       materials.preload();
 
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/accessories/');
+      objLoader.setPath('../assets/models/accessories/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -1135,7 +1137,7 @@ export class AppComponent {
     this.raycaster.setFromCamera(localMouse, this.camera);
 
     intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    let clickedObject = intersects[0].object.parent;
+    let clickedObject = intersects[1].object.parent;
     console.log('Clicked object: ', clickedObject.name);
 
     if (
@@ -1344,7 +1346,7 @@ export class AppComponent {
       true
     );
     const mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/' + self.draggedObject.opt_type + '/');
+    mtlLoader.setPath('../assets/models/' + self.draggedObject.opt_type + '/');
     mtlLoader.load(
       self.draggedObject.order_code.toLowerCase() + '.mtl',
       materials => {
@@ -1352,7 +1354,7 @@ export class AppComponent {
 
         const objLoader = new THREE.OBJLoader();
         objLoader.setPath(
-          '/assets/models/' + self.draggedObject.opt_type + '/'
+          '../assets/models/' + self.draggedObject.opt_type + '/'
         );
 
         objLoader.setMaterials(materials);
@@ -1458,10 +1460,12 @@ export class AppComponent {
     this.renderer.setSize(this.viewport.width, this.viewport.height);
     this.renderer.sortObjects = true;
     this.renderer.autoClear = false;
+    this.renderer.setClearColor(0xEEEEEE);
+
 
     this.container.appendChild(this.renderer.domElement);
 
-    var r = '/assets/threetextures/cube/' + this.currentBackground + '/';
+    var r = '../assets/threetextures/cube/' + this.currentBackground + '/';
     var urls = [
       r + 'posx.jpg',
       r + 'negx.jpg',
@@ -1494,7 +1498,7 @@ export class AppComponent {
   }
 
   createGround() {
-    var texture = new THREE.TextureLoader().load('/assets/textures/grass.jpg');
+    var texture = new THREE.TextureLoader().load('../assets/textures/grass.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
@@ -1517,7 +1521,7 @@ export class AppComponent {
   }
 
   createMaterialCedarSiding() {
-    var texture = new THREE.TextureLoader().load('/assets/textures/cedar3.jpg');
+    var texture = new THREE.TextureLoader().load('../assets/textures/cedar3.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
@@ -1529,7 +1533,7 @@ export class AppComponent {
   }
   createMaterialCedarElement() {
     var texture = new THREE.TextureLoader().load(
-      '/assets/textures/cedar-element.jpg'
+      '../assets/textures/cedar-element.jpg'
     );
     this.materialCedarElement = new THREE.MeshLambertMaterial({
       flatShading: true,
@@ -1548,7 +1552,7 @@ export class AppComponent {
       materialArray.push(
         new THREE.MeshBasicMaterial({
           map: THREE.ImageUtils.loadTexture(
-            '/assets/threetextures/cube/' +
+            '../assets/threetextures/cube/' +
               this.currentBackground +
               '/' +
               directions[i] +
@@ -1577,7 +1581,7 @@ export class AppComponent {
     for (let i = 1; i <= self.selectedStyle.$.sides; i++) {
       let textureName = newTexture.order_code;
       var texture = new THREE.TextureLoader().load(
-        '/assets/textures/' + textureName + '.jpg'
+        '../assets/textures/' + textureName + '.jpg'
       );
       texture.repeat.set(1, 1);
 
@@ -1608,7 +1612,7 @@ export class AppComponent {
         if (el instanceof THREE.Mesh && el.name.includes('trim')) {
           let textureName = newTexture.order_code;
           var texture = new THREE.TextureLoader().load(
-            '/assets/textures/' + textureName + '.jpg'
+            '../assets/textures/' + textureName + '.jpg'
           );
           texture.wrapS = THREE.RepeatWrapping;
           texture.wrapT = THREE.RepeatWrapping;
@@ -1716,7 +1720,7 @@ export class AppComponent {
       this.availableOptions = [];
       res.forEach(opt => {
         opt['image'] =
-          '/assets/thumbnails/' +
+          '../assets/thumbnails/' +
           opt.opt_type +
           '/' +
           opt.order_code.toLowerCase() +
@@ -1737,12 +1741,12 @@ export class AppComponent {
     const roofSize = this.objectSize(targetObject).x;
 
     const mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/dormer/');
+    mtlLoader.setPath('../assets/models/dormer/');
 
     mtlLoader.load('dormer_1.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/dormer/');
+      objLoader.setPath('../assets/models/dormer/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -1787,7 +1791,7 @@ export class AppComponent {
     mtlLoader.load('dormer_2.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/dormer/');
+      objLoader.setPath('../assets/models/dormer/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -1839,12 +1843,12 @@ export class AppComponent {
     var targetSize = self.objectSize(targetObject);
 
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/dormer/');
+    mtlLoader.setPath('../assets/models/dormer/');
     mtlLoader.load('dormer_2.mtl', function(materials) {
       materials.preload();
 
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/dormer/');
+      objLoader.setPath('../assets/models/dormer/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -1914,12 +1918,12 @@ export class AppComponent {
 
     let promise = new Promise(function(resolve, reject) {
       var mtlLoader = new MTLLoader();
-      mtlLoader.setPath('/assets/models/window/');
+      mtlLoader.setPath('../assets/models/window/');
       mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
         materials.preload();
 
         var objLoader = new THREE.OBJLoader();
-        objLoader.setPath('/assets/models/window/');
+        objLoader.setPath('../assets/models/window/');
 
         objLoader.setMaterials(materials);
         objLoader.load(
@@ -1998,12 +2002,12 @@ export class AppComponent {
     let targetSize = self.objectSize(targetObject);
 
     var mtlLoader = new MTLLoader();
-    mtlLoader.setPath('/assets/models/flowerbox/');
+    mtlLoader.setPath('../assets/models/flowerbox/');
     mtlLoader.load(order_code.toLowerCase() + '.mtl', materials => {
       materials.preload();
 
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('/assets/models/flowerbox/');
+      objLoader.setPath('../assets/models/flowerbox/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -2039,12 +2043,12 @@ export class AppComponent {
           let order_code = option.ordercode;
 
           var mtlLoader = new MTLLoader();
-          mtlLoader.setPath('/assets/models/roofing/');
+          mtlLoader.setPath('../assets/models/roofing/');
           mtlLoader.load(order_code.toLowerCase() + '.mtl', materials => {
             materials.preload();
 
             var objLoader = new THREE.OBJLoader();
-            objLoader.setPath('/assets/models/roofing/');
+            objLoader.setPath('../assets/models/roofing/');
 
             objLoader.setMaterials(materials);
             objLoader.load(
@@ -2084,12 +2088,12 @@ export class AppComponent {
 
     let promise = new Promise(function(resolve, reject) {
       var mtlLoader = new MTLLoader();
-      mtlLoader.setPath('/assets/models/door/');
+      mtlLoader.setPath('../assets/models/door/');
       mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
         materials.preload();
 
         var objLoader = new THREE.OBJLoader();
-        objLoader.setPath('/assets/models/door/');
+        objLoader.setPath('../assets/models/door/');
 
         objLoader.setMaterials(materials);
         objLoader.load(
@@ -2367,32 +2371,32 @@ export class AppComponent {
     let box = this.scene.getObjectByName('skybox');
     this.scene.remove(box);
     let textures = [
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'posx' +
         '.jpg',
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'negx' +
         '.jpg',
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'posy' +
         '.jpg',
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'negy' +
         '.jpg',
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'posz' +
         '.jpg',
-      '/assets/threetextures/cube/' +
+      '../assets/threetextures/cube/' +
         this.currentBackground +
         '/' +
         'negz' +
