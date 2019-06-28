@@ -141,21 +141,21 @@ export class AppComponent {
 
   @ViewChild('container', { static: false }) elementRef: ElementRef;
   public container: HTMLElement;
-  cube: THREE.MeshBasicMaterial;
+  // cube: THREE.Mesh;
   shinglesMaterial = new THREE.MeshLambertMaterial({
     flatShading: true,
-    map: THREE.ImageUtils.loadTexture('/assets/textures/shingles.jpg'),
+    map: THREE.ImageUtils.loadTexture('../assets/shingles.jpg'),
     reflectivity: 0.1
   });
   cedarMaterial = new THREE.MeshLambertMaterial({
     flatShading: true,
-    map: THREE.ImageUtils.loadTexture('/assets/textures/wall_seamless.jpg'),
+    map: THREE.ImageUtils.loadTexture('../assets/cedar.jpg'),
     reflectivity: 0.1
   });
   elementsCedarMaterial = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
     map: THREE.ImageUtils.loadTexture(
-      '/assets/textures/' + 'wall_seamless' + '.jpg'
+      '../assets/' + 'cedar' + '.jpg'
     ),
     transparent: false,
     flatShading: true

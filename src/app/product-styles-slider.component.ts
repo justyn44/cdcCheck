@@ -8,7 +8,7 @@ import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 
 @Component({
   selector: 'product-styles-slider',
-  providers: [],
+  providers: [NguCarouselConfig],
   templateUrl: './product-styles-slider.html',
   styleUrls: ['./product-styles-slider.css']
 })

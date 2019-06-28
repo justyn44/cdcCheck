@@ -14,7 +14,8 @@ import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 @Component({
   selector: 'optionsCategory-slider',
   templateUrl: './options-categories-slider.component.html',
-  styleUrls: ['./category-slider.css']
+  styleUrls: ['./category-slider.css'],
+  providers: [NguCarouselConfig]
 })
 export class optionsCategorySlider {
   productStylesOptions: any;
