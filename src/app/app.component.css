@@ -1,7 +1,6 @@
-.logo {
-    width: 100%;
-  }
-  .custBut {
-    margin-bottom: 15px;
-    height: auto;
-  }
+#stage_viewport{
+  border: 1px solid #000;
+  position: absolute;
+  background: #f2f6f8;
+  background: linear-gradient(to bottom, #f2f6f8 0%,#d8e1e7 50%,#b5c6d0 51%,#e0eff9 100%);
+}

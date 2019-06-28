@@ -4,7 +4,9 @@
     "paths": {
       "*": ["types/*"],
       "timers": ["node_modules/timers-browserify"],
-      "stream": ["node_modules/stream-browserify"]
+      "stream": ["node_modules/stream-browserify"],
+      "three-full": ["node_modules/@types/three"],
+      "three": ["node_modules/@types/three"]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",

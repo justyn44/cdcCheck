@@ -59,6 +59,6 @@ export class categorySlider {
       'baseProductClicked',
       void 0
     );
-    __metadata('ProductService', 'NgxCarousel')
+    __metadata('ProductService', 'NguCarousel')
   })();
 }

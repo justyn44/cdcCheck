@@ -1,61 +1,48 @@
-import { BrowserModule } from '@angular/platform-browser';
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  Renderer,
-  SkipSelf,
-  NgModule,
-  NgModuleFactoryLoader
-} from '@angular/core';
-import { AppComponent } from './app.component';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Headers, RequestOptions, Http, HttpModule } from '@angular/http';
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { OwlModule } from 'ngx-owl-carousel';
-import { CarouselModule } from 'ngx-carousels';
-import { __decorate, __metadata } from 'tslib';
-// import 'reflect-metadata';
-import { ImageUploadModule } from 'angular2-image-upload';
-import { categorySlider } from './categorySlider';
+import {
+  MatMenuModule,
+  MatIconModule,
+  MatButtonModule,
+  MatSelectModule,
+  MatCardModule
+} from '@angular/material';
+import { AppComponent } from './app.component';
+import { DaliDraggable } from './directives/draggable.directive';
+import { CanvasInteractionDirective } from './directives/canvasinteraction.directive';
+import { categorySlider } from './category-slider.component';
 import { productStylesSlider } from './product-styles-slider.component';
 import { productOptionsSlider } from './product-options-slider.component';
-import { DaliDraggable } from './directives/draggable.directive';
 import { optionsCategoriesSlider } from './options-categories-slider.component';
 import { wallChangeLeft } from './wall-change-left.component';
 import { wallChangeRight } from './wall-change-right.component';
-import { CanvasInteractionDirective } from './directives/canvasinteraction.directive';
-import { MatCardModule } from '@angular/material/card';
-import { HttpClientModule } from '@angular/common/http';
-import 'rxjs-compat';
-// import { AtftModule } from 'atft';
+import { ImageUploadModule } from 'angular2-image-upload';
+import { OwlModule } from 'ngx-owl-carousel';
+import { NguCarousel, NguCarouselModule } from '@ngu/carousel';
+import 'hammerjs';
 
+// tslint:disable 
 
-// tslint:disable
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSelectModule,
     MatCardModule,
     FormsModule,
     HttpModule,
     HttpClientModule,
     OwlModule,
-    CarouselModule,
-    ImageUploadModule.forRoot(),
+    NguCarouselModule,
+    ImageUploadModule.forRoot()
   ],
-  exports: [
-    AppComponent,
-    categorySlider,
-    productStylesSlider,
-    productOptionsSlider,
-    DaliDraggable,
-    optionsCategoriesSlider,
-    wallChangeLeft,
-    wallChangeRight,
-    CanvasInteractionDirective
-  ],
-  providers: [CarouselModule],
   declarations: [
     AppComponent,
     categorySlider,
@@ -67,7 +54,7 @@ import 'rxjs-compat';
     wallChangeRight,
     CanvasInteractionDirective
   ],
-  bootstrap: [AppComponent]
-  })
-
+  bootstrap: [AppComponent],
+  providers: [NguCarousel]
+})
 export class AppModule {}

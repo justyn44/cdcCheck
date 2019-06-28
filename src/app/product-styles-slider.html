@@ -1,0 +1,18 @@
+<ngu-carousel [inputs]="stylesCarousel">
+  <button NguCarouselPrev class="leftRs">&lt;</button>
+  <button NguCarouselNext class="rightRs">&gt;</button>
+  <ngu-tile NgxCarouselItem *ngFor="let product of products">
+    <div
+      [ngStyle]="{
+        'background-image':
+          'url(assets/images/style_thumbnails/' +
+          product.$.name.replace(' ', '-').toLowerCase() +
+          '.jpg)'
+      }"
+      ttclass="style-thumbnail"
+      (click)="styleSelected(product)"
+    >
+      <h3>{{ product.$.name }}</h3>
+    </div>
+  </ngu-tile>
+</ngu-carousel>

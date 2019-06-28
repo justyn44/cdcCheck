@@ -1,0 +1,6 @@
+.category-button {
+  cursor: pointer;
+}
+.category-button:hover {
+  background-color: #ddd;
+}
