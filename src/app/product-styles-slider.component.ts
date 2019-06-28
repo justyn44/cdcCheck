@@ -42,6 +42,10 @@ export class productStylesSlider{
       load: 2,
       touch: true,
       loop: false,
+      point: {
+        visible: true,
+        hideOnSingleSlide: true
+      },
       custom: 'banner'
     }
   }
