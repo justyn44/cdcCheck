@@ -17,7 +17,7 @@ import { CanvasInteractionDirective } from './directives/canvasinteraction.direc
 import { categorySlider } from './category-slider.component';
 import { productStylesSlider } from './product-styles-slider.component';
 import { productOptionsSlider } from './product-options-slider.component';
-import { optionsCategoriesSlider } from './options-categories-slider.component';
+import { optionsCategorySlider } from './options-categories-slider.component';
 import { wallChangeLeft } from './wall-change-left.component';
 import { wallChangeRight } from './wall-change-right.component';
 import { ImageUploadModule } from 'angular2-image-upload';
@@ -49,7 +49,7 @@ import 'hammerjs';
     productStylesSlider,
     productOptionsSlider,
     DaliDraggable,
-    optionsCategoriesSlider,
+    optionsCategorySlider,
     wallChangeLeft,
     wallChangeRight,
     CanvasInteractionDirective

@@ -4,10 +4,11 @@ import {
   AfterViewInit,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnInit
 } from '@angular/core';
 import { ProductService } from './product.service';
-import { NguCarousel } from '@ngu/carousel';
+import { NguCarouselConfig, NguCarousel } from '@ngu/carousel';
 
 // tslint:disable
 
@@ -16,7 +17,7 @@ import { NguCarousel } from '@ngu/carousel';
   templateUrl: 'category-slider.component.html',
   styleUrls: ['category-slider.css']
 })
-export class categorySlider {
+export class categorySlider implements OnInit{
   productStylesOptions: any;
   categories;
   items;
@@ -26,7 +27,7 @@ export class categorySlider {
   >();
   constructor(
     private _productService: ProductService,
-    public carouselOne: NguCarousel<any>
+    public carouselOne: NguCarouselConfig
   ) {}
   ngOnInit(): void {
     this.categories = this._productService.getCategories();
@@ -43,7 +44,7 @@ export class categorySlider {
         visible: true
       },
       load: 2,
-      touch: true,
+      touch: false,
       loop: true,
       custom: 'banner'
     };

@@ -4,7 +4,7 @@ import { HttpModule, Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import xml2js from 'xml2js';
 import { productStyle } from './product-style';
-import { optionsCategoriesSlider } from './options-categories-slider.component';
+import { optionsCategorySlider } from './options-categories-slider.component';
 
 
 //tslint:disable
@@ -235,7 +235,7 @@ export class ProductService{
 		]
 	}
 
-	getOptionsCategories(): optionsCategories[] {
+	getOptionsCategories(){
 		return[ 
 			{id: 116, name: "Windows"},
 			{id: 103, name: "Doors"},

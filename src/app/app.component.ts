@@ -22,11 +22,12 @@ import { optionsCategorySlider } from './options-categories-slider.component';
 import { productOptionsSlider } from './product-options-slider.component';
 import { ProductService } from './product.service';
 import { UtilitiesService } from './utilities.service';
-import * as THREE from 'three';
+// import * as THREE from 'three';
 declare var require: any;
-const OBJLoader = require('three-obj-loader')(THREE);
+const OBJLoader = require('three-obj-loader');
 const MTLLoader = require('three-mtl-loader');
-import { OrbitControls } from 'three-orbitcontrols-ts'
+const THREE = require('three');
+const OrbitControls = require('three-orbitcontrols');
 import DragControls from 'drag-controls';
 DragControls.install({ THREE });
 import { SceneUtils } from 'three-full';
@@ -140,7 +141,7 @@ export class AppComponent {
 
   @ViewChild('container', { static: false }) elementRef: ElementRef;
   public container: HTMLElement;
-  cube: THREE.Mesh;
+  cube: THREE.MeshBasicMaterial;
   shinglesMaterial = new THREE.MeshLambertMaterial({
     flatShading: true,
     map: THREE.ImageUtils.loadTexture('/assets/textures/shingles.jpg'),

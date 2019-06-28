@@ -46,7 +46,6 @@ export class productOptionsSlider{
     };
   }
   ngOnInit(): void{
-    // this.options = this._productService.getCategoryOptions(113);
   }
   moveNext() {
     this.swiperContainer.swiper.slideNext();
@@ -58,14 +57,8 @@ export class productOptionsSlider{
     console.log(this.swiperContainer);
    }
   onSelect(basicProduct){
-    // this.currentSelectedProduct = basicProduct;
-    // this.productStyleClicked.emit(this.currentSelectedProduct);
   }
   ngOnChanges(): void{
-    // this.products = this._productService.getProducts();
-
-    // console.log('something changed');
-    // console.log(this.currentBaseProduct);
   }
 }
 

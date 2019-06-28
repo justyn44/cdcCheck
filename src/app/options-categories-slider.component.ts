@@ -7,16 +7,16 @@ import {
   EventEmitter
 } from '@angular/core';
 import { ProductService } from './product.service';
-import { NguCarousel } from '@ngu/carousel';
+import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 
 // tslint:disable
 
 @Component({
-  selector: 'category-slider',
-  templateUrl: 'category-slider.component.html',
-  styleUrls: ['category-slider.css']
+  selector: 'optionsCategory-slider',
+  templateUrl: './options-categories-slider.component.html',
+  styleUrls: ['./category-slider.css']
 })
-export class categorySlider {
+export class optionsCategorySlider {
   productStylesOptions: any;
   categories;
   items;
@@ -28,7 +28,7 @@ export class categorySlider {
   >();
   constructor(
     private _productService: ProductService,
-    public carouselOne: NguCarousel<any>
+    public carouselOne: NguCarouselConfig
   ) {}
   ngOnInit(): void {
     this.categories = this._productService.getCategories();

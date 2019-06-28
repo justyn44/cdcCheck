@@ -2,7 +2,7 @@ import {Component, ViewChild, AfterViewInit, OnChanges, Input, Output, EventEmit
 import { productStyle } from './product-style';
 import { ProductService } from './product.service';
 import 'hammerjs';
-import { NguCarousel } from '@ngu/carousel';
+import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 
 // tslint:disable
 
@@ -29,7 +29,7 @@ export class productStylesSlider{
   @Output() productStyleClicked:EventEmitter<number> = new EventEmitter<number>();
 
 
-  constructor(private _productService: ProductService, public stylesCarousel: NguCarousel<any>) {
+  constructor(private _productService: ProductService, public stylesCarousel: NguCarouselConfig) {
     
   } 
 
