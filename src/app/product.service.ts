@@ -2,7 +2,9 @@ import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpModule, Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { parseString } from 'xml2js';
 import xml2js from 'xml2js';
+
 import { productStyle } from './product-style';
 import { optionsCategorySlider } from './options-categories-slider.component';
 
@@ -18,13 +20,14 @@ export class ProductService{
 
 	public convertXMLToJson(data: string): Object {
     let res;
-    xml2js.parseString(data, { explicitArray: false }, (error, result) => {
-      if (error) {
-        throw new Error(error);
-      } else {
-        res = result;
-      }
-    });
+    parseString(data, { explicitArray: false }, (error, result) => {
+  if (error) {
+    throw new Error(error);
+  } else {
+    res = result;
+    console.log(result);
+  }
+});
     return res;
   }
   public convertToXml(rootObject:Object) {
@@ -32,7 +35,7 @@ export class ProductService{
   };
 
 	getStyles(category: String){ 
-		let url = '' + category + '/styles.xml';
+		let url = 'http://dev.summerwood.com/products/' + category + '/styles.xml';
 		let headers = new Headers();
   		headers.set('Accept', 'text/xml');
 		return this.http.get(url, {headers})
@@ -43,7 +46,7 @@ export class ProductService{
 	}
 
 	getProductConfiguration(id){ 
-		let url = '' + id + '.xml';
+		let url = 'http://dev.summerwood.com/products/configuration/' + id + '.xml';
 		let headers = new Headers();
 		return this.http.get(url, {headers})
 		.map( res => {

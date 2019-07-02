@@ -127,6 +127,12 @@ export class AppComponent {
     new THREE.PlaneBufferGeometry(500, 500, 8, 8),
     new THREE.MeshBasicMaterial({ color: 0xffffff })
   );
+
+  testSphere = new THREE.Mesh(
+    new THREE.SphereGeometry( 5, 32, 32 ),
+    new THREE.MeshBasicMaterial( {color: 0xffff00, wireframe: true} )
+  ); 
+
   numberOfSides;
   selectedElement = null;
   draggingStartedAt = null;
@@ -442,11 +448,11 @@ export class AppComponent {
     var loader = new THREE.OBJLoader(manager);
     let promise = new Promise(function(resolve, reject) {
       var mtlLoader = new MTLLoader();
-      mtlLoader.setPath('../assets/models/wall/horizontal/');
+      mtlLoader.setPath('../assets/models/wall/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
         var objLoader = new THREE.OBJLoader();
-        objLoader.setPath('../assets/models/wall/horizontal/');
+        objLoader.setPath('../assets/models/wall/');
         objLoader.setMaterials(materials);
         objLoader.load(
           filename + '.obj',
@@ -1394,7 +1400,7 @@ export class AppComponent {
     };
 
     // LIGHTS
-    var ambientLight = new THREE.AmbientLight(0x404040);
+    var ambientLight = new THREE.AmbientLight(0xffffff);
     var directionalLight1 = new THREE.DirectionalLight(0xc0c090);
     var directionalLight2 = new THREE.DirectionalLight(0xc0c090);
     var directionalLight3 = new THREE.DirectionalLight(0xc0c090);
@@ -1406,6 +1412,8 @@ export class AppComponent {
     directionalLight3.intensity = 0.5;
     directionalLight4.position.set(-100, 50, 100);
     directionalLight4.intensity = 0.5;
+    ambientLight.position.set(0, 200, 0);
+    ambientLight.intensity = 1;
 
     this.scene.add(directionalLight1);
     this.scene.add(directionalLight2);
@@ -1462,7 +1470,7 @@ export class AppComponent {
     this.renderer.autoClear = false;
     this.renderer.setClearColor(0xEEEEEE);
 
-
+    
     this.container.appendChild(this.renderer.domElement);
 
     var r = '../assets/threetextures/cube/' + this.currentBackground + '/';
@@ -1488,6 +1496,7 @@ export class AppComponent {
 
     this.helperPlane.visible = false;
     this.scene.add(this.helperPlane);
+    this.scene.add(this.testSphere);
 
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.25;
@@ -1741,16 +1750,16 @@ export class AppComponent {
     const roofSize = this.objectSize(targetObject).x;
 
     const mtlLoader = new MTLLoader();
-    mtlLoader.setPath('../assets/models/dormer/');
+    mtlLoader.setPath('../assets/models/roof/');
 
     mtlLoader.load('dormer_1.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('../assets/models/dormer/');
+      objLoader.setPath('../assets/models/roof/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
-        'dormer_2.obj',
+        'dormer.obj',
         function(object) {
           object.name = 'dormer';
           let objectSize = self.objectSize(object);
@@ -1788,14 +1797,14 @@ export class AppComponent {
       );
     });
 
-    mtlLoader.load('dormer_2.mtl', function(materials) {
+    mtlLoader.load('dormer.mtl', function(materials) {
       materials.preload();
       var objLoader = new THREE.OBJLoader();
-      objLoader.setPath('../assets/models/dormer/');
+      objLoader.setPath('../assets/models/roof/');
 
       objLoader.setMaterials(materials);
       objLoader.load(
-        'dormer_2.obj',
+        'dormer.obj',
         function(object) {
           object.name = 'dormer';
           let objectSize = self.objectSize(object);
@@ -2437,5 +2446,6 @@ export class AppComponent {
     var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
     skyBox.name = 'skybox';
     this.scene.add(skyBox);
+
   }
 }
