@@ -1,3 +1,4 @@
+// tslint:disable
 import {
   Component,
   ElementRef,
@@ -12,9 +13,6 @@ import {
   transition,
   animate
 } from '@angular/animations';
-// tslint:disable
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/from';
 import { HttpModule, Http, Headers } from '@angular/http';
 import { productStyle } from './product-style';
 import { categorySlider } from './category-slider.component';
@@ -27,11 +25,15 @@ const THREE = require('three');
 declare var require: any;
 // const OBJLoader = require('three-obj-loader')(THREE);
 // const MTLLoader = require('three-mtl-loader');
-import {MTLLoader, OBJLoader} from 'mtl-obj-loader'
+import { MTLLoader, OBJLoader } from 'mtl-obj-loader';
 const OrbitControls = require('three-orbitcontrols');
 import DragControls from 'drag-controls';
 DragControls.install({ THREE });
 import { SceneUtils } from 'three-full';
+
+document.write(
+  '<script type="x-shader/x-vertex" id="vertexShader">varying vec3 vWorldPosition; void main() {vec4 worldPosition = modelMatrix * vec4( position, 1.0 ); vWorldPosition = worldPosition.xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );}</script><script type="x-shader/x-fragment" id="fragmentShader"> uniform vec3 topColor; uniform vec3 bottomColor; uniform float offset; uniform float exponent; varying vec3 vWorldPosition; void main() { float h = normalize( vWorldPosition + offset ).y; gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );}</script>'
+);
 
 @Component({
   templateUrl: 'app.component.html',
@@ -75,7 +77,7 @@ import { SceneUtils } from 'three-full';
       state(
         'inactive',
         style({
-          left: '-25%'
+          left: '-30%'
         })
       ),
       state(
@@ -91,7 +93,7 @@ import { SceneUtils } from 'three-full';
       state(
         'inactive',
         style({
-          left: '-25%'
+          left: '-30%'
         })
       ),
       state(
@@ -118,7 +120,10 @@ export class AppComponent {
     1,
     1000
   );
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    preserveDrawingBuffer: false
+  });
   controls = new OrbitControls(this.camera, this.renderer.domElement);
   raycaster = new THREE.Raycaster();
   mouse = { clientX: 0, clientY: 0, layerX: 0, layerY: 0 };
@@ -128,11 +133,6 @@ export class AppComponent {
     new THREE.PlaneBufferGeometry(500, 500, 8, 8),
     new THREE.MeshBasicMaterial({ color: 0xffffff })
   );
-
-  testSphere = new THREE.Mesh(
-    new THREE.SphereGeometry( 5, 32, 32 ),
-    new THREE.MeshBasicMaterial( {color: 0xffff00, wireframe: true} )
-  ); 
 
   numberOfSides;
   selectedElement = null;
@@ -161,9 +161,7 @@ export class AppComponent {
   });
   elementsCedarMaterial = new THREE.MeshPhongMaterial({
     color: 0xdddddd,
-    map: THREE.ImageUtils.loadTexture(
-      '../assets/' + 'cedar' + '.jpg'
-    ),
+    map: THREE.ImageUtils.loadTexture('../assets/' + 'cedar' + '.jpg'),
     transparent: false,
     flatShading: true
   });
@@ -207,7 +205,7 @@ export class AppComponent {
       styleSiding: ''
     }
   };
-  optionsCategories;
+  optionsCategorySlider;
   selectedOptionsCategory = 'windows';
   selectedStyle: any = {
     $: { id: '1' },
@@ -270,7 +268,7 @@ export class AppComponent {
               this.selectedConfiguration.general.option = [res.general.option];
             }
             console.log('Initial selected product', res);
-            // this.createGround();
+            this.createGround();
             this.loadNewBuilding();
             this.addCubeMap();
           });
@@ -279,7 +277,7 @@ export class AppComponent {
         console.log('Error loading styles' + err);
       }
     );
-    this.optionsCategories = this._productService.getOptionsCategories();
+    this.optionsCategorySlider = this._productService.getOptionsCategories();
     this.sidingOptions = this._productService.getSidingOptions();
     this.trimOptions = this._productService.getTrimOptions();
     this.setViewport();
@@ -573,7 +571,7 @@ export class AppComponent {
                 2
               );
             }
-            self.sceneRoof.add(object);
+            self.scene.add(object);
             self.loadWallMask(object.position, objSize);
             resolve('Success: ');
           },
@@ -639,7 +637,7 @@ export class AppComponent {
     var objLoader = new OBJLoader();
     objLoader.setPath('../assets/models/wallmasks/');
     const filename = self.selectedStyle.$.name + '.obj';
-    let roof = self.sceneRoof.getObjectByName('roof');
+    let roof = self.scene.getObjectByName('roof');
     objLoader.load(
       filename,
       function(object) {
@@ -662,7 +660,7 @@ export class AppComponent {
         object.position.x = roofPos.x;
         object.position.y = roofPos.y;
         object.position.z = roofPos.z;
-        self.sceneWallMask.add(object);
+        self.scene.add(object);
       },
       self.onProgress,
       self.onError
@@ -828,6 +826,7 @@ export class AppComponent {
     mtlLoader.load(ordercode.toLowerCase() + '_left.mtl', function(materials) {
       materials.preload();
       var objLoader = new OBJLoader();
+      var bis;
       objLoader.setPath('../assets/models/shutter/');
       objLoader.setMaterials(materials);
       objLoader.load(
@@ -836,6 +835,11 @@ export class AppComponent {
           object.name = 'shutter-left';
           object.position.x = -targetSize.x / 2;
           object.position.y = -targetSize.y / 2;
+          object.traverse(function(child) {
+            if (child.type === 'THREE.Mesh') {
+              bis = child;
+            }
+          });
           targetObject.add(object);
         },
         self.onProgress,
@@ -980,7 +984,7 @@ export class AppComponent {
     let firstWall = self.scene.getObjectByName('wall-0');
     let wallPosition = firstWall.getWorldPosition();
     let wallSize = self.objectSize(firstWall);
-    let roof = self.sceneRoof.getObjectByName('roof');
+    let roof = self.scene.getObjectByName('roof');
     let roofPosition = roof.getWorldPosition();
     let roofSize = self.objectSize(roof);
 
@@ -1135,7 +1139,7 @@ export class AppComponent {
   onCanvasClickDown(event) {
     const self: AppComponent = this;
     this.mouse = event;
-    let intersects;
+    var intersects;
     let localMouse = new THREE.Vector2();
     localMouse.x =
       (event.layerX / this.renderer.domElement.clientWidth) * 2 - 1;
@@ -1150,7 +1154,7 @@ export class AppComponent {
     if (
       intersects.length !== 0 &&
       (clickedObject.name.includes('door') ||
-        clickedObject.name.includes('window'))
+        clickedObject.name.includes('window-'))
     ) {
       if (this.selectedElement) {
         this.removeObjectTransparency(this.selectedElement);
@@ -1401,20 +1405,26 @@ export class AppComponent {
     };
 
     // LIGHTS
-    var ambientLight = new THREE.AmbientLight(0xffffff);
-    var directionalLight1 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight2 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight3 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight4 = new THREE.DirectionalLight(0xc0c090);
+    var ambientLight = new THREE.AmbientLight(0x404040);
+    var directionalLight1 = new THREE.DirectionalLight(0xfeedc2);
+    var directionalLight2 = new THREE.DirectionalLight(0xfeedc2);
+    var directionalLight3 = new THREE.DirectionalLight(0xfeedc2);
+    var directionalLight4 = new THREE.DirectionalLight(0xfeedc2);
 
-    directionalLight1.position.set(-100, -50, 100);
-    directionalLight2.position.set(100, 50, -100);
-    directionalLight3.position.set(100, -50, -100);
-    directionalLight3.intensity = 0.5;
-    directionalLight4.position.set(-100, 50, 100);
-    directionalLight4.intensity = 0.5;
     ambientLight.position.set(0, 200, 0);
     ambientLight.intensity = 1;
+
+    directionalLight1.position.set(100, -50, 100);
+    directionalLight1.intensity = 0.5;
+
+    directionalLight2.position.set(100, 50, -100);
+    directionalLight2.intensity = 0.5;
+
+    directionalLight3.position.set(100, -50, -100);
+    directionalLight3.intensity = 0.5;
+
+    directionalLight4.position.set(-100, 50, 100);
+    directionalLight4.intensity = 0.5;
 
     this.scene.add(directionalLight1);
     this.scene.add(directionalLight2);
@@ -1422,56 +1432,15 @@ export class AppComponent {
     this.scene.add(directionalLight4);
     this.scene.add(ambientLight);
 
-    // sceneRoof lights
-    var ambientLight2 = new THREE.AmbientLight(0x404040);
-    var directionalLight2_1 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight2_2 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight2_3 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight2_4 = new THREE.DirectionalLight(0xc0c090);
-
-    directionalLight2_1.position.set(-100, -50, 100);
-    directionalLight2_2.position.set(100, 50, -100);
-    directionalLight2_3.position.set(100, -50, -100);
-    directionalLight2_3.intensity = 0.5;
-    directionalLight2_4.position.set(-100, 50, 100);
-    directionalLight2_4.intensity = 0.5;
-
-    this.sceneRoof.add(directionalLight2_1);
-    this.sceneRoof.add(directionalLight2_2);
-    this.sceneRoof.add(directionalLight2_3);
-    this.sceneRoof.add(directionalLight2_4);
-    this.sceneRoof.add(ambientLight2);
-
-    // sceneRoofOptions lights
-    var ambientLight3 = new THREE.AmbientLight(0x404040);
-    var directionalLight3_1 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight3_2 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight3_3 = new THREE.DirectionalLight(0xc0c090);
-    var directionalLight3_4 = new THREE.DirectionalLight(0xc0c090);
-
-    directionalLight3_1.position.set(-100, -50, 100);
-    directionalLight3_2.position.set(100, 50, -100);
-    directionalLight3_3.position.set(100, -50, -100);
-    directionalLight3_3.intensity = 0.5;
-    directionalLight3_4.position.set(-100, 50, 100);
-    directionalLight3_4.intensity = 0.5;
-
-    this.sceneRoofOptions.add(directionalLight3_1);
-    this.sceneRoofOptions.add(directionalLight3_2);
-    this.sceneRoofOptions.add(directionalLight3_3);
-    this.sceneRoofOptions.add(directionalLight3_4);
-    this.sceneRoofOptions.add(ambientLight3);
-
     this.camera.position.set(0.0, 0.0, 200.0);
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     this.scene.add(this.camera);
 
     this.renderer.setSize(this.viewport.width, this.viewport.height);
     this.renderer.sortObjects = true;
     this.renderer.autoClear = false;
-    this.renderer.setClearColor(0xEEEEEE);
+    this.renderer.setClearColor(0xeeeeee);
+    this.renderer.setPixelRatio(window.devicePixelRatio * 0.8);
 
-    
     this.container.appendChild(this.renderer.domElement);
 
     var r = '../assets/threetextures/cube/' + this.currentBackground + '/';
@@ -1497,18 +1466,23 @@ export class AppComponent {
 
     this.helperPlane.visible = false;
     this.scene.add(this.helperPlane);
-    this.scene.add(this.testSphere);
 
+    this.controls.rotateSpeed = 0.04;
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.25;
     this.controls.enableZoom = true;
-    this.controls.maxPolarAngle = Math.PI / 2; //Don't let to go below the ground
+    this.controls.minDistance = 100;
+    this.controls.maxDistance = 350;
+    this.controls.maxPolarAngle = Math.PI / 2;
+    this.controls.noZoom = false;
+    this.controls.noPan = false;
+    this.controls.staticMoving = false;
 
     this.render();
   }
 
   createGround() {
-    var texture = new THREE.TextureLoader().load('../assets/textures/grass.jpg');
+    var texture = new THREE.ImageUtils.loadTexture('../assets/grass.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
@@ -1517,12 +1491,15 @@ export class AppComponent {
       map: texture,
       reflectivity: 0.1
     });
-    var groundGeometry = new THREE.CubeGeometry(800, 5, 800);
+    var groundGeometry = new THREE.CubeGeometry(8000, 5, 8000);
     let ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.name = 'ground';
     ground.position.y = -Number(this.selectedConfiguration.style.styleHeight);
     console.log('Ground position ' + ground.position.y);
-    this.scene.add(ground);
+    const color = 0xffffff; // white
+    const near = 100;
+    const far = 1000;
+    // this.scene.add(ground);
   }
 
   createMaterials() {
@@ -1531,7 +1508,7 @@ export class AppComponent {
   }
 
   createMaterialCedarSiding() {
-    var texture = new THREE.TextureLoader().load('../assets/textures/cedar3.jpg');
+    var texture = new THREE.TextureLoader().load('../assets/cedar.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
@@ -1553,34 +1530,53 @@ export class AppComponent {
   }
 
   addCubeMap() {
-    var skyGeometry = new THREE.CubeGeometry(1024, 1024, 1024);
+    //  var skyGeometry = new THREE.CubeGeometry(512, 512, 512);
 
-    let directions = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'];
+    //  let directions = ["posx", "negx", "posy", "negy", "posz", "negz"];
 
-    var materialArray = [];
-    for (var i = 0; i < 6; i++)
-      materialArray.push(
-        new THREE.MeshBasicMaterial({
-          map: THREE.ImageUtils.loadTexture(
-            '../assets/threetextures/cube/' +
-              this.currentBackground +
-              '/' +
-              directions[i] +
-              '.jpg'
-          ),
-          side: THREE.BackSide
-        })
-      );
-    var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
-    var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
-    skyBox.name = 'skybox';
-    this.sceneBg.add(skyBox);
+    //  var materialArray = [];
+    //  for (var i = 0; i < 6; i++)
+    //    materialArray.push(
+    //      new THREE.MeshBasicMaterial({
+    //        map: THREE.ImageUtils.loadTexture(
+    //          "../assets/threetextures/cube/" +
+    //            this.currentBackground +
+    //            "/" +
+    //            directions[i] +
+    //            ".jpg"
+    //        ),
+    //        side: THREE.BackSide
+    //      })
+    //    );
+    //  var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+    //  var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+    {
+      const loader = new THREE.TextureLoader();
+      const texture = loader.load('../assets/images/bg/country.png');
+      texture.magFilter = THREE.LinearFilter;
+      texture.minFilter = THREE.LinearFilter;
+
+      const shader = THREE.ShaderLib.equirect;
+      const material = new THREE.ShaderMaterial({
+        fragmentShader: shader.fragmentShader,
+        vertexShader: shader.vertexShader,
+        uniforms: shader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide
+      });
+      material.uniforms.tEquirect.value = texture;
+      const plane = new THREE.BoxBufferGeometry(1000, 1000, 1000);
+      var skyBox = new THREE.Mesh(plane, material);
+      skyBox.name = 'skybox';
+      this.scene.add(skyBox);
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 
   changeBackground() {
     console.log('Changing background to ' + this.currentBackground);
     let box = this.scene.getObjectByName('skybox');
-    this.sceneBg.remove(box);
+    this.scene.remove(box);
 
     this.addCubeMap();
   }
@@ -1643,19 +1639,20 @@ export class AppComponent {
 
     (function render() {
       requestAnimationFrame(render);
-      self.renderer.render(self.sceneBg, self.camera);
-      self.renderer.render(self.sceneRoofOptions, self.camera);
+      self.renderer.render(self.scene, self.camera);
+      self.renderer.render(self.scene, self.camera);
 
       self.renderer.context.colorMask(false, false, false, false); // R, G, B, A
-      self.renderer.render(self.sceneRoofMask, self.camera);
-
-      self.renderer.context.colorMask(true, true, true, true);
-      self.renderer.render(self.sceneRoof, self.camera);
-      self.renderer.context.colorMask(false, false, false, false); // R, G, B, A
-      self.renderer.render(self.sceneWallMask, self.camera);
+      self.renderer.render(self.scene, self.camera);
 
       self.renderer.context.colorMask(true, true, true, true);
       self.renderer.render(self.scene, self.camera);
+      self.renderer.context.colorMask(false, false, false, false); // R, G, B, A
+      self.renderer.render(self.scene, self.camera);
+
+      self.renderer.context.colorMask(true, true, true, true);
+      self.renderer.render(self.scene, self.camera);
+      self.controls.update();
       var vector = self.camera.getWorldDirection(new THREE.Vector3());
       self.cameraAngle = THREE.Math.radToDeg(Math.atan2(vector.x, vector.z));
       self.cameraAngle = Math.round(self.cameraAngle);
@@ -1679,6 +1676,15 @@ export class AppComponent {
         self.currentWall = 2;
       }
     })();
+    window.addEventListener('resize', onWindowResize, false);
+
+    function onWindowResize() {
+      var canvasWidth = window.innerWidth;
+      var canvasHeight = window.innerHeight;
+      this.renderer.setSize(canvasWidth, canvasHeight);
+      this.camera.aspect = canvasWidth / canvasHeight;
+      this.camera.updateProjectionMatrix();
+    }
   }
 
   addObjectTransparency(object) {
@@ -1729,12 +1735,12 @@ export class AppComponent {
     this._productService.getCategoryOptions(category.id).subscribe(res => {
       this.availableOptions = [];
       res.forEach(opt => {
-        opt['image'] =
-          '../assets/thumbnails/' +
-          opt.opt_type +
-          '/' +
-          opt.order_code.toLowerCase() +
-          '.png';
+        opt['image'] = 'https://via.placeholder.com/150';
+        //  "../assets/thumbnails/" +
+        //  opt.opt_type +
+        //  "/" +
+        //  opt.order_code.toLowerCase() +
+        //  ".png";
         this.availableOptions.push(opt);
       });
     });
@@ -1745,7 +1751,7 @@ export class AppComponent {
   }
   loadTwoDormers() {
     let self: AppComponent = this;
-    let targetObject = self.sceneRoof.getObjectByName('roof');
+    let targetObject = self.scene.getObjectByName('roof');
     let targetPos = targetObject.getWorldPosition();
     var targetSize = self.objectSize(targetObject);
     const roofSize = this.objectSize(targetObject).x;
@@ -1753,7 +1759,7 @@ export class AppComponent {
     const mtlLoader = new THREE.MTLLoader();
     mtlLoader.setPath('../assets/models/roof/');
 
-    mtlLoader.load('dormer_1.mtl', function(materials) {
+    mtlLoader.load('dormer.mtl', function(materials) {
       materials.preload();
       var objLoader = new OBJLoader();
       objLoader.setPath('../assets/models/roof/');
@@ -1769,7 +1775,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofOptions.add(object);
+          self.scene.add(object);
         },
         self.onProgress,
         self.onError
@@ -1791,7 +1797,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofMask.add(object);
+          // self.scene.add(object);
         },
         self.onProgress,
         self.onError
@@ -1815,7 +1821,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofOptions.add(object);
+          self.scene.add(object);
         },
         self.onProgress,
         self.onError
@@ -1837,7 +1843,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofMask.add(object);
+          // self.scene.add(object);
         },
         self.onProgress,
         self.onError
@@ -1848,13 +1854,13 @@ export class AppComponent {
   loadDormerOption() {
     let self: AppComponent = this;
 
-    let targetObject = self.sceneRoof.getObjectByName('roof');
+    let targetObject = self.scene.getObjectByName('roof');
     let targetPos = targetObject.getWorldPosition();
     var targetSize = self.objectSize(targetObject);
 
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.setPath('../assets/models/dormer/');
-    mtlLoader.load('dormer_2.mtl', function(materials) {
+    mtlLoader.load('dormer.mtl', function(materials) {
       materials.preload();
 
       var objLoader = new OBJLoader();
@@ -1862,7 +1868,7 @@ export class AppComponent {
 
       objLoader.setMaterials(materials);
       objLoader.load(
-        'dormer_2.obj',
+        'dormer.obj',
         function(object) {
           object.name = 'dormer';
 
@@ -1871,7 +1877,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofOptions.add(object);
+          self.scene.add(object);
         },
         function(xhr) {
           self.percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
@@ -1897,7 +1903,7 @@ export class AppComponent {
           object.position.y = targetPos.y - targetSize.y / 2 + objectSize.y / 2;
           object.position.z = targetPos.z + targetSize.z / 2 - objectSize.z / 2;
 
-          self.sceneRoofMask.add(object);
+          self.scene.add(object);
         },
         self.onProgress,
         self.onError
@@ -1986,7 +1992,7 @@ export class AppComponent {
     let targetPos = targetObj.getWorldPosition();
     let targetSize = this.objectSize(targetObj);
     let objectSize = this.objectSize(object);
-    let objectPos = { x: 0, y: 0, z: 4.2 };
+    let objectPos = { x: 0, y: -4.2, z: 4.2 };
 
     switch (position) {
       case 'center':
@@ -2046,8 +2052,8 @@ export class AppComponent {
     this.selectedConfiguration.general.option.forEach(option => {
       if (option) {
         if (option.itemClass === 'cupola') {
-          let roof = self.sceneRoof.getObjectByName('roof');
-          let targetObject = self.sceneRoof.getObjectByName('roof');
+          let roof = self.scene.getObjectByName('roof');
+          let targetObject = self.scene.getObjectByName('roof');
           let roofPosition = targetObject.getWorldPosition();
           let roofSize = self.objectSize(roof);
           let order_code = option.ordercode;
@@ -2144,6 +2150,20 @@ export class AppComponent {
         );
       });
     });
+    // // // // // // // //
+    // DRAGCONTROLS TEST //
+    // // // // // // // //
+    // var dragControls = new DragControls(
+    //   Object,
+    //   this.camera,
+    //   this.renderer.domElement
+    // );
+    // dragControls.addEventListener('dragstart', function() {
+    //   this.controls.enabled = false;
+    // });
+    // dragControls.addEventListener('dragend', function() {
+    //   this.controls.enabled = true;
+    // });
     return promise;
   }
 
@@ -2212,28 +2232,28 @@ export class AppComponent {
         self.scene.remove(ch);
       });
 
-      let roofChildren = self.sceneRoof.children.filter(
+      let roofChildren = self.scene.children.filter(
         element =>
           element.type !== 'DirectionalLight' && element.type !== 'AmbientLight'
       );
       roofChildren.forEach(ch => {
-        self.sceneRoof.remove(ch);
+        self.scene.remove(ch);
       });
 
-      let roofOptionsChildren = self.sceneRoofOptions.children.filter(
+      let roofOptionsChildren = self.scene.children.filter(
         element =>
           element.type !== 'DirectionalLight' && element.type !== 'AmbientLight'
       );
       roofOptionsChildren.forEach(ch => {
-        self.sceneRoofOptions.remove(ch);
+        self.scene.remove(ch);
       });
 
-      while (self.sceneRoofMask.children.length > 0) {
-        self.sceneRoofMask.remove(self.sceneRoofMask.children[0]);
+      while (self.scene.children.length > 0) {
+        self.scene.remove(self.scene.children[0]);
       }
 
-      while (self.sceneWallMask.children.length > 0) {
-        self.sceneWallMask.remove(self.sceneWallMask.children[0]);
+      while (self.scene.children.length > 0) {
+        self.scene.remove(self.scene.children[0]);
       }
 
       resolve('Success: ');
@@ -2320,7 +2340,7 @@ export class AppComponent {
     let headers = new Headers();
     headers.append('X-Requested-With', 'XMLHttpRequest');
     this.http
-      .post(`https://api.cloudinary.com/v1_1/summerwood/upload`, formData, {
+      .post('https://api.cloudinary.com/v1_1/pervasive/upload', formData, {
         headers
       })
       .subscribe(data => {
@@ -2336,7 +2356,6 @@ export class AppComponent {
   shareOnTwitter() {
     var text = 'Check out my new creation that I made on http://summerwood.com';
     var img = new Image();
-    // Without 'preserveDrawingBuffer' set to true, we must render now
     this.renderer.render(this.scene, this.camera);
     img.src = this.renderer.domElement.toDataURL();
 
@@ -2377,7 +2396,7 @@ export class AppComponent {
   }
 
   useCustomerBackground(file) {
-    let skyGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
+    let skyGeometry = new THREE.CubeGeometry(512, 512, 512);
     let box = this.scene.getObjectByName('skybox');
     this.scene.remove(box);
     let textures = [
@@ -2431,7 +2450,7 @@ export class AppComponent {
   }
 
   useCustomerBackground2(file) {
-    let skyGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
+    let skyGeometry = new THREE.CubeGeometry(512, 512, 512);
     let box = this.scene.getObjectByName('skybox');
     this.scene.remove(box);
 
@@ -2447,6 +2466,5 @@ export class AppComponent {
     var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
     skyBox.name = 'skybox';
     this.scene.add(skyBox);
-
   }
 }

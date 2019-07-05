@@ -10,99 +10,186 @@
     </div>
   </div>
   <!-- Begin Header -->
-  <div class="row top-section">
-    <div class="col-3 col-md-2">
+  <div class="top-section has-background-grey-lighter">
+    <div class="">
       <img
         alt="Custom Design Center"
         src="https://placeholder.com/wp-content/uploads/2018/10/placeholder.com-logo1.jpg"
         class="logo"
-      />
-    </div>
-    <div class="col-9 col-md-7 product-details">
-      <h2 class="style-title">{{ selectedConfiguration.style.styleName }}</h2>
-      <p class="style-description">{{ selectedStyle.description }}</p>
-    </div>
-    <div class="col-2 col-md-2">Intersect: {{ tmp }}</div>
-  </div>
-  <!-- End of Header -->
-
-  <!-- Begin main content -->
-  <div class="row">
-    <div class="col-12 col-md-2 ">
-      <div class="col-6 col-md-12 toolbox-group">
-        <h5>Building options</h5>
-        <label>Size (Depth x Width)</label>
-        <select
-          [(ngModel)]="selectedConfiguration.style.styleDW"
-          (ngModelChange)="onProductSizeChanged()"
-          name="Select size"
-          class="ui fluid search selection dropdown"
+		/>
+		<h2 class="title is-3 subTxt" style="margin-top: 0.5em;">{{ selectedConfiguration.style.styleName }}</h2>
+      <p class="subtitle subTxt">{{ selectedStyle.description }}</p>
+	 </div>
+	 <div class="">
+      <div class="toolbox-group">
+        <h5
+          class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
         >
-          <option
-            *ngFor="let size of selectedStyle.depthwidth"
-            [attr.value]="size.$.value"
-            >{{ size.$.name }}</option
-          >
-        </select>
-        <label>Wall height</label>
-        <select
-          [(ngModel)]="selectedConfiguration.style.styleHeight"
-          (ngModelChange)="onProductSizeChanged()"
-          name="Select"
-          class="ui fluid search selection dropdown"
+          Building options
+        </h5>
+        <label class="subtitle is-6 removeMarginBottom"
+          >Size (Depth x Width)</label
         >
-          <option
-            *ngFor="let height of selectedStyle.wallheight"
-            [attr.value]="height.$.value"
-            >{{ height.$.name }}</option
+        <div class="select is-primary is-fullwidth">
+          <select
+            [(ngModel)]="selectedConfiguration.style.styleDW"
+            (ngModelChange)="onProductSizeChanged()"
+            name="Select size"
+            class="ui fluid search selection dropdown"
           >
-        </select>
-        <label>Overhang</label>
-        <select
-          [(ngModel)]="selectedOverhang"
-          (ngModelChange)="onOverhangChanged()"
-          name="Select"
-          class="ui fluid search selection dropdown"
-        >
-          <option
-            *ngFor="let overhang of selectedStyle.overhang"
-            [attr.value]="overhang.$.value"
-            >{{ overhang.$.name }}</option
-          >
-        </select>
+            <option
+              *ngFor="let size of selectedStyle.depthwidth"
+              [attr.value]="size.$.value"
+              >{{ size.$.name }}</option
+            >
+          </select>
+        </div>
         <br />
-        <button class="options-button" (click)="showSidings()">
+        <label class="subtitle is-6 removeMarginBottom">Wall height</label>
+        <div class="select is-primary">
+          <select
+            [(ngModel)]="selectedConfiguration.style.styleHeight"
+            (ngModelChange)="onProductSizeChanged()"
+            name="Select"
+            class="ui fluid search selection dropdown"
+          >
+            <option
+              *ngFor="let height of selectedStyle.wallheight"
+              [attr.value]="height.$.value"
+              >{{ height.$.name }}</option
+            >
+          </select>
+        </div>
+        <br />
+        <label class="subtitle is-6 removeMarginBottom">Overhang</label>
+        <div class="select is-primary">
+          <select
+            [(ngModel)]="selectedOverhang"
+            
+            name="Select"
+            class="ui fluid search selection dropdown"
+          >
+            <option
+              *ngFor="let overhang of selectedStyle.overhang"
+              [attr.value]="overhang.$.value"
+              >{{ overhang.$.name }}</option
+            >
+          </select>
+        </div>
+        <br />
+        <br />
+        <button
+          class="button is-primary is-outlined is-fullwidth"
+          (click)="showSidings()"
+        >
           Change siding
         </button>
         <br />
-        <button class="options-button" (click)="showTrim()">Change trim</button>
+        <button
+          class="button is-primary is-outlined is-fullwidth"
+          (click)="showTrim()"
+        >
+          Change trim
+        </button>
       </div>
-      <div class="col-6 col-md-12 toolbox-group">
-        <h5>Add options</h5>
+      <div class="toolbox-group margTop">
+        <h5 class="subtitle is-6 has-text-white has-background-primary">
+          Add options
+        </h5>
         <div class="options-categories-list">
           <button
-            *ngFor="let category of optionsCategories"
+            *ngFor="let category of optionsCategorySlider"
             (click)="showOptions(category)"
-            class="options-button"
+            class="button multiButton is-primary is-outlined is-fullwidth"
           >
             {{ category.name }}
           </button>
         </div>
       </div>
     </div>
+    <div class="toolbox-group toolbox">
+      <h5
+        class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
+      >
+        Toolbox
+      </h5>
+      <br />
+      <button
+        mat-raised-button
+        class="tool-btn"
+        (click)="alignEvenly(currentWall)"
+      >
+        Align evenly
+      </button>
+      <br />
+      <br />
+      <h5 class="subtitle is-6 has-text-white has-background-primary">Change Background</h5>
+      <div class="select is-primary is-fullwidth">
+        <select [(ngModel)]="currentBackground" (change)="changeBackground()">
+          <option value="pool">Pool</option>
+          <option value="Park2">Park2</option>
+          <option value="Sorsele">Sorsele</option>
+        </select>
+      </div>
+      <br />
+      <br />
+      <h5 class="subtitle is-6 has-text-white has-background-primary">
+        Use your own background
+      </h5>
+      <image-upload
+        [max]="2"
+        [extensions]="['jpeg', 'png']"
+        class="image-upload"
+        (removed)="onBackgroundRemoved($event)"
+        (uploadFinished)="onBackgroundUploadFinished($event)"
+        (uploadStateChanged)="onBackgroundUploadStateChanged($event)"
+      >
+      </image-upload>
+      <h5
+        class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
+      >
+        Sharing
+      </h5>
+      <button class="button" color="primary" (click)="shareOnFacebook()">
+        <span class="icon">
+          <i class="fab fa-facebook-f has-text-link"></i>
+        </span>
+        &nbsp; Share on Facebook
+      </button>
+      <br />
+      <button class="button" (click)="shareOnTwitter()">
+        <span class="icon">
+          <i class="fab fa-twitter has-text-info"></i>
+        </span>
+        &nbsp; Share on Twitter
+      </button>
+      <br />
+      <button class="button" (click)="takeScreenshot()">
+        <span class="icon">
+          <i class="fas fa-save has-text-primary"></i>
+        </span>
+        &nbsp; Save screenshot
+      </button>
+      <br />
+    </div>
+  </div>
+  <!-- End of Header -->
+
+  <!-- Begin main content -->
+  <div class="container is-widescreen cdcContainer">
     <div
       #container
-      class="col-12 col-md-10"
+      class="cdcRender"
       id="renderer_container"
       canvasinteraction
       (onMouseDown)="onCanvasClickDown($event)"
       (onMouseUp)="onCanvasClickUp($event)"
       (onMouseMove)="onCanvasMouseMove($event)"
-      (drop)="droppedOption($event, dropData)"
+      (drop)="droppedOption($event, dragData)"
       (dragover)="allowDrop($event)"
     ></div>
   </div>
-  <div class="row">
+  <div class="bottomCat">
     <div class="col-12 col-md-12 col-xs-12 category-buttons">
       <button
         class="category-button"
@@ -122,52 +209,6 @@
       </product-styles-slider>
     </div>
   </div>
-  <div class="toolbox-group floating-right-center">
-    <h5>Toolbox</h5>
-    <br />
-    <button
-      mat-raised-button
-      class="tool-btn"
-      (click)="alignEvenly(currentWall)"
-    >
-      Align evenly
-    </button>
-    <br />
-    <br />
-    <h5>Change Background</h5>
-    <select [(ngModel)]="currentBackground" (change)="changeBackground($event)">
-      <option value="pool">Pool</option>
-      <option value="Park2">Park2</option>
-      <option value="Sorsele">Sorsele</option>
-    </select>
-    <br />
-    <br />
-    <h5>Use your own background</h5>
-    <image-upload
-      [max]="2"
-      [extensions]="['jpeg', 'png']"
-      class="image-upload"
-      (removed)="onBackgroundRemoved($event)"
-      (uploadFinished)="onBackgroundUploadFinished($event)"
-      (uploadStateChanged)="onBackgroundUploadStateChanged($event)"
-    >
-    </image-upload>
-  </div>
-  <div class="toolbox-group floating-right-bottom">
-    <h5>Sharing</h5>
-    <button class="share-btn" color="primary" (click)="shareOnFacebook()">
-      Share on Facebook
-    </button>
-    <br />
-    <button class="share-btn" (click)="shareOnTwitter()">
-      Share on Twitter
-    </button>
-    <br />
-    <button class="share-btn" (click)="takeScreenshot()">
-      Save screenshot
-    </button>
-    <br />
-  </div>
   <div
     id="context-menu"
     [ngClass]="selectedElement != null ? 'visible' : 'hidden'"
@@ -177,21 +218,25 @@
     <button
       [ngClass]="draggingStartedAt != null ? 'dragging' : 'inactive'"
       draggable="true"
-      (drag)="dragObject($event)"
+		(drag)="dragObject($event)"
+		class="has-background-primary"
     >
-      <i class="material-icons">open_with</i>
+      <i class="material-icons has-text-light">open_with</i>
     </button>
     <br />
     <br />
-    <button (click)="removeSelectedElement()">
-      <i class="material-icons">delete</i>
+	 <button
+	 (click)="removeSelectedElement()"
+	 class="has-background-primary"
+	 >
+      <i class="material-icons has-text-light">delete</i>
     </button>
   </div>
   <!-- Begin drawer for sidings -->
   <mat-card class="sidings-drawer" [@sidingsDrawertrigger]="sidingsDrawerState">
     <mat-card-header>
-      <div class="col-md-9 drawer-title">Change Siding</div>
-      <div class="col-md-3">
+      <div class="col-md-9 subtitle is-6 margTop">Change Siding</div>
+      <div class="col-md-3 closeX">
         <button mat-mini-fab color="accent" (click)="closeSidingsDrawer()">
           <mat-icon aria-label="Close">close</mat-icon>
         </button>
@@ -212,7 +257,7 @@
   <!-- Brgin drawer for trip -->
   <mat-card class="sidings-drawer" [@trimDrawertrigger]="trimDrawerState">
     <mat-card-header>
-      <div class="col-md-9 drawer-title">Change Trim</div>
+      <div class="col-md-9 subtitle is-6 margTop">Change Trim</div>
       <div class="col-md-3">
         <button mat-mini-fab color="accent" (click)="closeTrimDrawer()">
           <mat-icon aria-label="Close">close</mat-icon>
@@ -234,7 +279,7 @@
   <!-- Begin drawer for options -->
   <mat-card class="options-drawer" [@optionsDrawertrigger]="optionsDrawerState">
     <mat-card-header>
-      <div class="col-md-8 drawer-title">
+      <div class="col-md-8 subtitle is-6 margTop">
         {{ selectedOptionsCategory.name }}
       </div>
       <div class="col-md-3">

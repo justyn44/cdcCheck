@@ -57,99 +57,99 @@ export class ProductService{
 
   	getStyleDetails(id){
   		let productData = {
-  			1 : { styleName: 'cp_roof', thumbnail: '/assets/images/style_thumbnails/copper Creek.jpg', baseCategory: 1, 
+  			1 : { styleName: 'cp_roof', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
   					width: 14, height: 7.375, depth: 8,
   					roof: {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 78, width:190, depth: 106},
   				    dormer: {id: 66666, name:"Dormer", order_code:"dormer1", type:"dormer", height: 4, width:5.8},
   				    sides: [ 
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", height: 7.375, width:14},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", height: 7.375, width:14},
   				    
-  				   	{"id": 28, name:"DD8 French 30-Lite Double Doors", order_code:"DD8", opt_type:103, left:4.51, top: 1.625, type:"door"},
-  				   	{"id":8,"name":"W1 Standard fixed Window","order_code":"W1","opt_type":116, left:-60, top: 2, type:"window"},
-  				   	{"id":8,"name":"W1 Standard fixed Window","order_code":"W1","opt_type":116, left:60, top: 2, type:"window"}
+  				   	{"id": 28, name:"DD8 - French Double Doors - 30-Lite", order_code:"DD8", opt_type:103, left:4.51, top: 1.625, type:"door"},
+  				   	{"id":8,"name":"W1 - Standard  Window (fixed)","order_code":"W1","opt_type":116, left:-60, top: 2, type:"window"},
+  				   	{"id":8,"name":"W1 - Standard Window (fixed)","order_code":"W1","opt_type":116, left:60, top: 2, type:"window"}
   				    ],
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet",  type:"wall", height: 7.375, width:8},
+  				    {id: 666, name:"8x7.375ft Walls",  type:"wall", height: 7.375, width:8},
   				    ],
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", height: 7.375, width:14},
+  				    {id: 666, name:"14x7.375ft Walls", type:"wall", height: 7.375, width:14},
   				    ],
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 7.375, width:8},
-  				   	{"id":8,"name":"W9 10-Pane Sidelite Window","order_code":"W9","opt_type":116, left:4.11, top: 2, type:"window"}
+  				    {id: 666, name:"8x7.375ft Walls", type:"wall", height: 7.375, width:8},
+  				   	{"id":8,"name":"W9 - 10 Pane Sidelite Window","order_code":"W9","opt_type":116, left:4.11, top: 2, type:"window"}
   				    ]
   				    ]},
-  			2 : { styleName: 'Bar Harbor', thumbnail: '/assets/images/style_thumbnails/bar-harbor.jpg', baseCategory: 1, 
+  			2 : { styleName: 'Bar Harbor', thumbnail: '../assets/images/thumbnails/barHarbor.jpeg', baseCategory: 1, 
   					width: 8, height: 6.5, depth: 6, 
   					roof: {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 28, width:103, depth: 90},
   				    sides: [ 
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", order_code: 'bh_8x18_wall_front', height: 6.5, width:8},
-  				   	{"id": 28, name:"D8 Single French 15-Lite Door", order_code:"D4", opt_type:103, left:4.51, top: 1.625, type:"door"},
-  				   	{"id":8,"name":"W1 Standard fixed Window","order_code":"W1","opt_type":116, left:1.51, top: 2, type:"window"},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", order_code: 'bh_8x18_wall_front', height: 6.5, width:8},
+  				   	{"id": 28, name:"D8 - French 15-Lite Door (single)", order_code:"D4", opt_type:103, left:4.51, top: 1.625, type:"door"},
+  				   	{"id":8,"name":"W1 - Standard Window (fixed)","order_code":"W1","opt_type":116, left:1.51, top: 2, type:"window"},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 6.5, width:6},
+  				    {id: 666, name:"8x7.375ft walls", type:"wall", height: 6.5, width:6},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", order_code: 'bh_8x18_wall_back', height: 6.5, width:8},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", order_code: 'bh_8x18_wall_back', height: 6.5, width:8},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 6.5, width:6},
+  				    {id: 666, name:"8x7.375ft walls", type:"wall", height: 6.5, width:6},
   				    ]
   				    ]},
   			3 : { styleName: 'Bala Bunkie', baseCategory: 1, 
   				    sides: [ 
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet",type:"wall", height: 7.75, width:7.5},
+  				    {id: 666, name:"8x14ft walls",type:"wall", height: 7.75, width:7.5},
   				    {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 3, width:8.3},
   				    {id: 66666, name:"Dormer", order_code:"dormer1", type:"dormer", height: 4, width:6.2},
-  				   	{"id": 28, name:"D8 Single French 15-Lite Door", order_code:"D8", opt_type:103, left:4.1, top: 1.625, type:"door"},
-  				   	{"id":2,"name":"W9 10-Pane Sidelite Window","order_code":"W9","opt_type":116, left:1.1, top: 1.8, type:"window"},
+  				   	{"id": 28, name:"D8 - French 15-Lite Door (single)", order_code:"D8", opt_type:103, left:4.1, top: 1.625, type:"door"},
+  				   	{"id":2,"name":"W9 - 10 Pane Sidelite Window","order_code":"W9","opt_type":116, left:1.1, top: 1.8, type:"window"},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet",type:"wall", height: 7.75, width:8},
+  				    {id: 666, name:"8x14ft walls",type:"wall", height: 7.75, width:8},
   				    {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 4, width:9.8},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", type:"wall", height: 7.75, width:12.5},
+  				    {id: 666, name:"8x14ft walls", type:"wall", height: 7.75, width:12.5},
   				    {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 4, width:13.8},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", type:"wall", height: 7.75, width:8},
+  				    {id: 666, name:"8x14ft walls", type:"wall", height: 7.75, width:8},
   				    {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 4, width:9.8},
-  				   	{"id":8,"name":"W9 10-Pane Sidelite Window","order_code":"W9","opt_type":116, left:4.11, top: 2, type:"window"}
+  				   	{"id":8,"name":"W9 - 10 Pane Sidelite Window","order_code":"W9","opt_type":116, left:4.11, top: 2, type:"window"}
   				    ]
   				    ]},
-  			5 : { styleName: 'Barside', thumbnail: '/assets/images/style_thumbnails/barside.jpg', baseCategory: 1, 
+  			5 : { styleName: 'Barside', thumbnail: '../assets/images/thumbnails/barside.jpg', baseCategory: 1, 
   					width: 168, height: 88.5, depth: 88.5,
   					roof: {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 78, width:190, depth: 146, position: 'back'},
   				    terrace: {id: 66666, name:"Terrace", order_code:"barside", type:"terrace", height: 78, width: 5.8},
   				    sides: [ 
   				    
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", height: 7.375, width:14},
-  				   	{"id": 28, name:"DD8 French 30-Lite Double Doors", order_code:"DD8", opt_type:103, left:8, top: 1.8, type:"door"},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", height: 7.375, width:14},
+  				   	{"id": 28, name:"DD8 - French 30-Lite Doors (double)", order_code:"DD8", opt_type:103, left:8, top: 1.8, type:"door"},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet",  type:"wall", height: 7.375, width:7.375},
+  				    {id: 666, name:"8x7.375ft walls",  type:"wall", height: 7.375, width:7.375},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", height: 7.375, width:14},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", height: 7.375, width:14},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 7.375, width:7.375}
+  				    {id: 666, name:"8x7.375ft walls", type:"wall", height: 7.375, width:7.375}
   				    ]
   				    ]},
   			4 : { styleName: 'Victorian', baseCategory: 1, 
@@ -158,24 +158,24 @@ export class ProductService{
   				    sides: [ 
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", order_code:"vg_10ft_wall", type:"wall", height: 10, width:10},
+  				    {id: 666, name:"8x14ft walls", order_code:"vg_10ft_wall", type:"wall", height: 10, width:10},
   				    {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 3, width:8.3},
   				    {id: 66666, name:"Dormer", order_code:"dormer1", type:"dormer", height: 4, width:6.2},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:8},
+  				    {id: 666, name:"8x14ft walls", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:8},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:12.5},
+  				    {id: 666, name:"8x14ft walls", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:12.5},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8 x 14 feet", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:8},
+  				    {id: 666, name:"8x14ft walls", order_code:"vg_10ft_wall", type:"wall", height: 7.75, width:8},
   				    ]
   				    ]},
-  			6 : { styleName: 'Sonoma', thumbnail: '/assets/images/style_thumbnails/bar-harbor.jpg', baseCategory: 1, 
+  			6 : { styleName: 'Sonoma', thumbnail: '../assets/images/thumbnails/sonoma.jpg', baseCategory: 1, 
   					width: 144, height: 94.5, depth: 120, 
   					roof: {id: 6666, name:"Roof with shingles", order_code:"roof1", type:"roof", height: 28, width:103, depth: 90},
   				    sides: [ 
@@ -187,15 +187,15 @@ export class ProductService{
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 7.875, width:10},
+  				    {id: 666, name:"8x7.375ft walls", type:"wall", height: 7.875, width:10},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 14x7.375 feet", type:"wall", height: 7.875, width:12},
+  				    {id: 666, name:"14x7.375ft walls", type:"wall", height: 7.875, width:12},
   				    ],
   				    
   				    [
-  				    {id: 666, name:"Wall 8x7.375 feet", type:"wall", height: 7.875, width:10},
+  				    {id: 666, name:"8x7.375ft walls", type:"wall", height: 7.875, width:10},
   				    ]
   				    ]},
   			
@@ -230,11 +230,11 @@ export class ProductService{
 
 	getSizes() {
 		return[ 
-			{value: '7x13', name: "7ft x 13ft $3,695.00"},
-			{value: '8x15', name: "8ft x 15ft $3,695.00"},
-			{value: '12x18', name: "12ft x 20ft $12,295.00"},
-			{value: '12x20', name: "12ft x 20ft $12,295.00"},
-			{value: '22x26', name: "22ft x 26ft $30,895.00"},
+			{value: '7x13', name: "7x13ft $3,695"},
+			{value: '8x15', name: "8x15ft $3,695"},
+			{value: '12x18', name: "12x20ft $12,295"},
+			{value: '12x20', name: "12x20ft $12,295"},
+			{value: '22x26', name: "22x26ft $30,895"},
 		]
 	}
 

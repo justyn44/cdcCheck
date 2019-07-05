@@ -234,7 +234,7 @@ export class AppComponent {
         }
       );
       // this.currentWallName = this.configSelect.nameStyle;
-      this.optionsCategories = this._prodServ.getOptionsCategories();
+      this.optionsCategorySlider = this._prodServ.getOptionsCategories();
       this.sidingOptions = this._prodServ.getSidingOptions();
       this.trimOptions = this._prodServ.getTrimOptions();
       this.container = this.elementRef.nativeElement;

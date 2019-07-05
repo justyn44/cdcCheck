@@ -12,7 +12,7 @@ import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 // tslint:disable
 
 @Component({
-  selector: 'optionsCategory-slider',
+  selector: 'options-category-slider',
   templateUrl: './options-categories-slider.component.html',
   styleUrls: ['./category-slider.css'],
   providers: [NguCarouselConfig]
