@@ -206,7 +206,7 @@ export class AppComponent {
     }
   };
   optionsCategorySlider;
-  selectedOptionsCategory = 'windows';
+  selectedOptionsCategory: any = [{ id: '', name: '' }];
   selectedStyle: any = {
     $: { id: '1' },
     depthwidth: [{ $: { id: '754' } }],
@@ -1334,7 +1334,7 @@ export class AppComponent {
         }
       }
       if (!placedCorrectly) {
-        alert('You should place this on highlighted object');
+        alert('You should place this on the highlighted object');
       }
     } else {
       this.loadDroppedOption($event, dragData, this.scene);

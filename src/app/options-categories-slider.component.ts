@@ -19,7 +19,7 @@ import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
 })
 export class optionsCategorySlider {
   productStylesOptions: any;
-  categories;
+  optionsCategories;
   items;
 
   @Input() currentCategory: number;
@@ -32,7 +32,7 @@ export class optionsCategorySlider {
     public carouselOne: NguCarouselConfig
   ) {}
   ngOnInit(): void {
-    this.categories = this._productService.getCategories();
+    this.optionsCategories = this._productService.getCategories();
     this.items = ['it1', 'it2', 'it3'];
 
     this.carouselOne = {
