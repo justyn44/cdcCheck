@@ -1,5 +1,5 @@
 h1 {
-  color: #369;
+  color: #0000ff;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 250%;
 }
@@ -37,7 +37,7 @@ select {
   padding: 15px 0;
 }
 .subTxt {
-	padding: 0 15px;
+  padding: 0 15px;
 }
 .loader-container {
   position: absolute;
@@ -470,9 +470,9 @@ ul.ngxcarouselPoint {
   font-weight: bold;
 }
 .closeX {
-	position: absolute;
-	right: 0;
-	top: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 .options-categories-list {
   overflow: hidden;
@@ -522,7 +522,7 @@ ul.ngxcarouselPoint {
   max-height: 75%;
 }
 .subtitle h6 {
-	font-size: 0.9rem;
+  font-size: 0.9rem;
 }
 .btn-add-option {
   cursor: pointer;
