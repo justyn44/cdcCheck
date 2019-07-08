@@ -10,21 +10,21 @@
     </div>
   </div>
   <!-- Begin Header -->
-  <div class="top-section has-background-grey-lighter">
+  <div class="top-section">
     <div class="">
       <img
         alt="Custom Design Center"
         src="../assets/TEMPLOGO.png"
         class="logo"
-		/>
-		<h2 class="title is-3 subTxt" style="margin-top: 0.5em;">{{ selectedConfiguration.style.styleName }}</h2>
+      />
+      <h2 class="title is-3 subTxt" style="margin-top: 0.5em;">
+        {{ selectedConfiguration.style.styleName }}
+      </h2>
       <p class="subtitle subTxt">{{ selectedStyle.description }}</p>
-	 </div>
-	 <div class="">
+    </div>
+    <div class="">
       <div class="toolbox-group">
-        <h5
-          class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
-        >
+        <h5 class="subtitle is-6 removeMarginBottom">
           Building options
         </h5>
         <label class="subtitle is-6 removeMarginBottom"
@@ -65,7 +65,6 @@
         <div class="select is-primary">
           <select
             [(ngModel)]="selectedOverhang"
-            
             name="Select"
             class="ui fluid search selection dropdown"
           >
@@ -78,29 +77,22 @@
         </div>
         <br />
         <br />
-        <button
-          class="button is-primary is-outlined is-fullwidth"
-          (click)="showSidings()"
-        >
-          Change siding
+        <button class="button is-primary is-outlined" (click)="showSidings()">
+          Change Siding
         </button>
-        <br />
-        <button
-          class="button is-primary is-outlined is-fullwidth"
-          (click)="showTrim()"
-        >
-          Change trim
+        <button class="button is-primary is-outlined" (click)="showTrim()">
+          Change Trim
         </button>
       </div>
       <div class="toolbox-group margTop">
-        <h5 class="subtitle is-6 has-text-white has-background-primary">
+        <h5 class="subtitle is-6">
           Add options
         </h5>
         <div class="options-categories-list">
           <button
-            *ngFor="let category of optionsCategories "
+            *ngFor="let category of optionsCategories"
             (click)="showOptions(category)"
-            class="button multiButton is-primary is-outlined is-fullwidth"
+            class="button multiButton is-primary is-outlined"
           >
             {{ category.name }}
           </button>
@@ -108,34 +100,27 @@
       </div>
     </div>
     <div class="toolbox-group toolbox">
-      <h5
-        class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
-      >
-        Toolbox
+      <h5 class="subtitle is-6 removeMarginBottom">
+        Alignment
       </h5>
       <br />
-      <button
-        mat-raised-button
-        class="tool-btn"
-        (click)="alignEvenly(currentWall)"
-      >
-        Align evenly
+      <button class="button" (click)="alignEvenly(currentWall)">
+        Align All Items
       </button>
       <br />
       <br />
-      <h5 class="subtitle is-6 has-text-white has-background-primary">Change Background</h5>
-      <div class="select is-primary is-fullwidth">
-        <select [(ngModel)]="currentBackground" (change)="changeBackground()">
-          <option value="pool">Pool</option>
-          <option value="Park2">Park2</option>
-          <option value="Sorsele">Sorsele</option>
-        </select>
-      </div>
-      <br />
-      <br />
-      <h5 class="subtitle is-6 has-text-white has-background-primary">
-        Use your own background
-      </h5>
+      <div class="toolbox-group margTop">
+        <h5 class="subtitle is-6">Change Background</h5>
+        <div class="select is-primary is-fullwidth">
+          <select [(ngModel)]="currentBackground" (change)="changeBackground()">
+            <option value="pool">Pool</option>
+            <option value="Park2">Park2</option>
+            <option value="Sorsele">Sorsele</option>
+          </select>
+        </div>
+        <label style="text-align: center;" class="subtitle is-6 removeMarginBottom"
+        >Or upload your own background</label
+      >
       <image-upload
         [max]="2"
         [extensions]="['jpeg', 'png']"
@@ -145,32 +130,32 @@
         (uploadStateChanged)="onBackgroundUploadStateChanged($event)"
       >
       </image-upload>
-      <h5
-        class="subtitle is-6 has-text-white removeMarginBottom has-background-primary"
-      >
-        Sharing
-      </h5>
-      <button class="button" color="primary" (click)="shareOnFacebook()">
-        <span class="icon">
-          <i class="fab fa-facebook-f has-text-link"></i>
-        </span>
-        &nbsp; Share on Facebook
-      </button>
-      <br />
-      <button class="button" (click)="shareOnTwitter()">
-        <span class="icon">
-          <i class="fab fa-twitter has-text-info"></i>
-        </span>
-        &nbsp; Share on Twitter
-      </button>
-      <br />
-      <button class="button" (click)="takeScreenshot()">
-        <span class="icon">
-          <i class="fas fa-save has-text-primary"></i>
-        </span>
-        &nbsp; Save screenshot
-      </button>
-      <br />
+      </div>
+
+      
+      <div class="toolbox-group margTop">
+        <h5 class="subtitle is-6 removeMarginBottom">
+          Sharing
+        </h5>
+        <button class="button social-btn" color="primary" (click)="shareOnFacebook()">
+          <span class="icon">
+            <i class="fab fa-facebook-f has-text-link"></i>
+          </span>
+          &nbsp; Share on Facebook
+        </button>
+        <button class="button social-btn" (click)="shareOnTwitter()">
+          <span class="icon">
+            <i class="fab fa-twitter has-text-info"></i>
+          </span>
+          &nbsp; Share on Twitter
+        </button>
+        <button class="button social-btn" (click)="takeScreenshot()">
+          <span class="icon">
+            <i class="fas fa-save has-text-primary"></i>
+          </span>
+          &nbsp; Save screenshot
+        </button>
+      </div>
     </div>
   </div>
   <!-- End of Header -->
@@ -218,17 +203,14 @@
     <button
       [ngClass]="draggingStartedAt != null ? 'dragging' : 'inactive'"
       draggable="true"
-		(drag)="dragObject($event)"
-		class="has-background-primary"
+      (drag)="dragObject($event)"
+      class="has-background-primary"
     >
       <i class="material-icons has-text-light">open_with</i>
     </button>
     <br />
     <br />
-	 <button
-	 (click)="removeSelectedElement()"
-	 class="has-background-primary"
-	 >
+    <button (click)="removeSelectedElement()" class="has-background-primary">
       <i class="material-icons has-text-light">delete</i>
     </button>
   </div>
