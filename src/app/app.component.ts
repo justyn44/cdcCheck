@@ -16,14 +16,14 @@ import {
 import { HttpModule, Http, Headers } from '@angular/http';
 import { productStyle } from './product-style';
 import { categorySlider } from './category-slider.component';
-import { optionsCategorySlider } from './options-categories-slider.component';
+import { optionsCategories  } from './options-categories-slider.component';
 import { productOptionsSlider } from './product-options-slider.component';
 import { ProductService } from './product.service';
 import { UtilitiesService } from './utilities.service';
 // import * as THREE from 'three';
 const THREE = require('three');
 declare var require: any;
-// const OBJLoader = require('three-obj-loader')(THREE);
+// const OBJLoader = require('three-obj-loader');
 // const MTLLoader = require('three-mtl-loader');
 import { MTLLoader, OBJLoader } from 'mtl-obj-loader';
 const OrbitControls = require('three-orbitcontrols');
@@ -205,7 +205,7 @@ export class AppComponent {
       styleSiding: ''
     }
   };
-  optionsCategorySlider;
+  optionsCategories ;
   selectedOptionsCategory: any = [{ id: '', name: '' }];
   selectedStyle: any = {
     $: { id: '1' },
@@ -277,7 +277,7 @@ export class AppComponent {
         console.log('Error loading styles' + err);
       }
     );
-    this.optionsCategorySlider = this._productService.getOptionsCategories();
+    this.optionsCategories  = this._productService.getOptionsCategories();
     this.sidingOptions = this._productService.getSidingOptions();
     this.trimOptions = this._productService.getTrimOptions();
     this.setViewport();
@@ -446,7 +446,7 @@ export class AppComponent {
     var manager = new THREE.LoadingManager();
     var loader = new OBJLoader(manager);
     let promise = new Promise(function(resolve, reject) {
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new MTLLoader();
       mtlLoader.setPath('../assets/models/wall/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
@@ -491,7 +491,7 @@ export class AppComponent {
     let self: AppComponent = this;
     let filename = 'table';
     let promise = new Promise(function(resolve, reject) {
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new MTLLoader();
       mtlLoader.setPath('/assets/models/accessories/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
@@ -528,7 +528,7 @@ export class AppComponent {
     let self: AppComponent = this;
     let filename = this.selectedConfiguration.style.styleName;
     let promise = new Promise(function(resolve, reject) {
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new MTLLoader();
       mtlLoader.setPath('../assets/models/roof/');
       mtlLoader.load(filename + '.mtl', function(materials) {
         materials.preload();
@@ -656,7 +656,8 @@ export class AppComponent {
           scaleHeight + 0.03,
           scaleDepth + 0.06
         );
-        let roofPos = roof.getWorldPosition();
+        const center = new THREE.Vector3();
+        let roofPos = roof.getWorldPosition( center );
         object.position.x = roofPos.x;
         object.position.y = roofPos.y;
         object.position.z = roofPos.z;
@@ -821,7 +822,7 @@ export class AppComponent {
   loadNewBuildingWindowShutters(targetObject, ordercode) {
     let self: AppComponent = this;
     let targetSize = self.objectSize(targetObject);
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/shutter/');
     mtlLoader.load(ordercode.toLowerCase() + '_left.mtl', function(materials) {
       materials.preload();
@@ -867,7 +868,7 @@ export class AppComponent {
   loadNewBuildingWindowFlowerbox(targetObject, ordercode) {
     let self: AppComponent = this;
     let targetSize = self.objectSize(targetObject);
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/flowerbox/');
     mtlLoader.load(ordercode.toLowerCase() + '.mtl', function(materials) {
       materials.preload();
@@ -896,10 +897,11 @@ export class AppComponent {
     console.log('Loading terrace');
     let self: AppComponent = this;
     let firstWall = self.scene.getObjectByName('wall-0');
-    let wallPosition = firstWall.getWorldPosition();
+    const center = new THREE.Vector3();
+    let wallPosition = firstWall.getWorldPosition( center );
     let wallSize = self.objectSize(firstWall);
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/terrace/');
     mtlLoader.load('barside.mtl', function(materials) {
       materials.preload();
@@ -934,10 +936,11 @@ export class AppComponent {
     let self: AppComponent = this;
 
     let firstWall = self.scene.getObjectByName('wall-0');
-    let wallPosition = firstWall.getWorldPosition();
+    const center = new THREE.Vector3();
+    let wallPosition = firstWall.getWorldPosition( center );
     let wallSize = self.objectSize(firstWall);
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/accessories/');
     mtlLoader.load('glen_echo_roof_accessory.mtl', function(materials) {
       materials.preload();
@@ -982,13 +985,14 @@ export class AppComponent {
     let self: AppComponent = this;
 
     let firstWall = self.scene.getObjectByName('wall-0');
-    let wallPosition = firstWall.getWorldPosition();
+    const center = new THREE.Vector3();
+    let wallPosition = firstWall.getWorldPosition( center );
     let wallSize = self.objectSize(firstWall);
     let roof = self.scene.getObjectByName('roof');
-    let roofPosition = roof.getWorldPosition();
+    let roofPosition = roof.getWorldPosition( center );
     let roofSize = self.objectSize(roof);
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/accessories/');
     mtlLoader.load('windsor_column.mtl', function(materials) {
       materials.preload();
@@ -1128,7 +1132,8 @@ export class AppComponent {
     let parent = this.scene.getObjectByName('wall-' + this.currentWall);
     let intersects = this.raycaster.intersectObjects(parent.children, true);
     let objSize = this.objectSize(this.selectedElement);
-    let parentPosition = parent.getWorldPosition();
+    const center = new THREE.Vector3();
+    let parentPosition = parent.getWorldPosition( center );
     let targetBox = new THREE.Box3().setFromObject(parent);
     let parentSize = this.objectSize(parent);
 
@@ -1356,7 +1361,7 @@ export class AppComponent {
       targetObject.children,
       true
     );
-    const mtlLoader = new THREE.MTLLoader();
+    const mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/' + self.draggedObject.opt_type + '/');
     mtlLoader.load(
       self.draggedObject.order_code.toLowerCase() + '.mtl',
@@ -1474,9 +1479,7 @@ export class AppComponent {
     this.controls.minDistance = 100;
     this.controls.maxDistance = 350;
     this.controls.maxPolarAngle = Math.PI / 2;
-    this.controls.noZoom = false;
-    this.controls.noPan = false;
-    this.controls.staticMoving = false;
+    this.controls.enablePan = false;
 
     this.render();
   }
@@ -1491,7 +1494,7 @@ export class AppComponent {
       map: texture,
       reflectivity: 0.1
     });
-    var groundGeometry = new THREE.CubeGeometry(8000, 5, 8000);
+    var groundGeometry = new THREE.BoxGeometry(8000, 5, 8000);
     let ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.name = 'ground';
     ground.position.y = -Number(this.selectedConfiguration.style.styleHeight);
@@ -1735,12 +1738,12 @@ export class AppComponent {
     this._productService.getCategoryOptions(category.id).subscribe(res => {
       this.availableOptions = [];
       res.forEach(opt => {
-        opt['image'] = 'https://via.placeholder.com/150';
-        //  "../assets/thumbnails/" +
-        //  opt.opt_type +
-        //  "/" +
-        //  opt.order_code.toLowerCase() +
-        //  ".png";
+        opt['image'] =
+        "../assets/thumbnails/" +
+        opt.opt_type +
+        "/" +
+        opt.order_code.toLowerCase() +
+        ".png";
         this.availableOptions.push(opt);
       });
     });
@@ -1752,11 +1755,12 @@ export class AppComponent {
   loadTwoDormers() {
     let self: AppComponent = this;
     let targetObject = self.scene.getObjectByName('roof');
-    let targetPos = targetObject.getWorldPosition();
+    const center = new THREE.Vector3();
+    let targetPos = targetObject.getWorldPosition( center );
     var targetSize = self.objectSize(targetObject);
     const roofSize = this.objectSize(targetObject).x;
 
-    const mtlLoader = new THREE.MTLLoader();
+    const mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/roof/');
 
     mtlLoader.load('dormer.mtl', function(materials) {
@@ -1855,10 +1859,11 @@ export class AppComponent {
     let self: AppComponent = this;
 
     let targetObject = self.scene.getObjectByName('roof');
-    let targetPos = targetObject.getWorldPosition();
+    const center = new THREE.Vector3();
+    let targetPos = targetObject.getWorldPosition( center );
     var targetSize = self.objectSize(targetObject);
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/dormer/');
     mtlLoader.load('dormer.mtl', function(materials) {
       materials.preload();
@@ -1929,11 +1934,12 @@ export class AppComponent {
     let self: AppComponent = this;
 
     let targetObject = self.scene.getObjectByName('wall-' + side);
-    let targetPos = targetObject.getWorldPosition();
+    const center = new THREE.Vector3();
+    let targetPos = targetObject.getWorldPosition( center );
     let targetSize = self.objectSize(targetObject);
 
     let promise = new Promise(function(resolve, reject) {
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new MTLLoader();
       mtlLoader.setPath('../assets/models/window/');
       mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
         materials.preload();
@@ -2017,7 +2023,7 @@ export class AppComponent {
     let targetPos = targetObject.getWorldPosition();
     let targetSize = self.objectSize(targetObject);
 
-    var mtlLoader = new THREE.MTLLoader();
+    var mtlLoader = new MTLLoader();
     mtlLoader.setPath('../assets/models/flowerbox/');
     mtlLoader.load(order_code.toLowerCase() + '.mtl', materials => {
       materials.preload();
@@ -2054,11 +2060,12 @@ export class AppComponent {
         if (option.itemClass === 'cupola') {
           let roof = self.scene.getObjectByName('roof');
           let targetObject = self.scene.getObjectByName('roof');
-          let roofPosition = targetObject.getWorldPosition();
+          const center = new THREE.Vector3();
+          let roofPosition = targetObject.getWorldPosition( center );
           let roofSize = self.objectSize(roof);
           let order_code = option.ordercode;
 
-          var mtlLoader = new THREE.MTLLoader();
+          var mtlLoader = new MTLLoader();
           mtlLoader.setPath('../assets/models/roofing/');
           mtlLoader.load(order_code.toLowerCase() + '.mtl', materials => {
             materials.preload();
@@ -2099,11 +2106,12 @@ export class AppComponent {
     let self: AppComponent = this;
 
     let targetObject = self.scene.getObjectByName(target);
-    let targetPos = targetObject.getWorldPosition();
+    const center = new THREE.Vector3();
+    let targetPos = targetObject.getWorldPosition( center );
     let targetSize = self.objectSize(targetObject);
 
     let promise = new Promise(function(resolve, reject) {
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new MTLLoader();
       mtlLoader.setPath('../assets/models/door/');
       mtlLoader.load(order_code.toLowerCase() + '.mtl', function(materials) {
         materials.preload();
@@ -2396,7 +2404,7 @@ export class AppComponent {
   }
 
   useCustomerBackground(file) {
-    let skyGeometry = new THREE.CubeGeometry(512, 512, 512);
+    let skyGeometry = new THREE.BoxGeometry(512, 512, 512);
     let box = this.scene.getObjectByName('skybox');
     this.scene.remove(box);
     let textures = [
@@ -2450,7 +2458,7 @@ export class AppComponent {
   }
 
   useCustomerBackground2(file) {
-    let skyGeometry = new THREE.CubeGeometry(512, 512, 512);
+    let skyGeometry = new THREE.BoxGeometry(512, 512, 512);
     let box = this.scene.getObjectByName('skybox');
     this.scene.remove(box);
 

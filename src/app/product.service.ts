@@ -6,7 +6,7 @@ import { parseString } from 'xml2js';
 import xml2js from 'xml2js';
 
 import { productStyle } from './product-style';
-import { optionsCategorySlider } from './options-categories-slider.component';
+import { optionsCategories  } from './options-categories-slider.component';
 
 
 //tslint:disable
@@ -253,7 +253,7 @@ export class ProductService{
 
 		getSidingOptions(){
 			let options = 
-				[	{"id":1,"name":"Cedar","order_code":"cedar3","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/cedar-7x12.png'},
+				[	{"id":1,"name":"Cedar","order_code":"cedar3","opt_type":'siding', "thumbnail": '../assets/images/thumbnails/wallTex/cedar-7x12.jpg'},
 					{"id":2,"name":"Canexel Acadia","order_code":"canexel-acadia","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-acadia.png'},
 					{"id":3,"name":"Canexel Cliffside","order_code":"canexel-cliffside","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-cliffside.png'},
 					{"id":3,"name":"Canexel Gold","order_code":"canexel-autumn-gold","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-autumn-gold.png'},
@@ -263,7 +263,7 @@ export class ProductService{
 
 		getTrimOptions(){
 			let options = 
-				[	{"id":1,"name":"Cedar","order_code":"cedar3","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/cedar-7x12.png'},
+				[	{"id":1,"name":"Cedar","order_code":"cedar3","opt_type":'siding', "thumbnail": '../assets/images/thumbnails/wallTex/cedar-7x12.jpg'},
 					{"id":2,"name":"Canexel Acadia","order_code":"canexel-acadia","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-acadia.png'},
 					{"id":3,"name":"Canexel Cliffside","order_code":"canexel-cliffside","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-cliffside.png'},
 					{"id":3,"name":"Canexel Gold","order_code":"canexel-autumn-gold","opt_type":'siding', "thumbnail": '/assets/thumbnails/wall/horizontal/canexel-autumn-gold.png'},
@@ -425,7 +425,7 @@ export class ProductService{
 
 	getWalls(){
 		return[
-		  { id: 0, styleName: 'front', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1, 
+		  { id: 0, styleName: 'front', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
 		    elemente: [
 		      {id: 0, element_name: 'wall1', width: 13.3, height: 6.375	, option_type:'wall', image: '/assets/images/sonoma/perete_montat.jpg'},
 		      {id: 1, element_name: 'wall_frame', width: 10.5, height: 8, option_type:'wall_frame', image: '888.png'},
@@ -442,7 +442,7 @@ export class ProductService{
 		      {id: 12, element_name: 'dormer',  width: 4, height: 3.3, option_type:'dormer', image: '888.png'},
 		      {id: 13, element_name: 'D6 Deluxe 9-Lite Single Door',  width: 3.34, height: 6.125, option_type:'door', image: '/assets/images/sonoma/usa_montata.png'},
 		      ]},
-		   { id: 1, styleName: 'right', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1, 
+		   { id: 1, styleName: 'right', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
 		    elemente: [
 			  {id: 0, element_name: 'wall1', width: 10.3, height: 6.375	, option_type:'wall', image: '/assets/images/sonoma/perete_montat.jpg'},
 		      {id: 1, element_name: 'wall_frame', width: 10.5, height: 8, option_type:'wall_frame', image: '888.png'},
@@ -459,7 +459,7 @@ export class ProductService{
 		      {id: 12, element_name: 'dormer',  width: 4, height: 3.3, option_type:'dormer', image: '888.png'},
 		      {id: 13, element_name: 'D6 Deluxe 9-Lite Single Door',  width: 3.34, height: 6.125, option_type:'door', image: '888.png'},
 		      ]},
-		    { id: 2, styleName: 'back', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1, 
+		    { id: 2, styleName: 'back', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
 		    elemente: [
 		      {id: 0, element_name: 'wall1', width: 13.3, height: 6.375	, option_type:'wall', image: '/assets/images/sonoma/perete_montat.jpg'},
 		      {id: 1, element_name: 'wall_frame', width: 10.5, height: 8, option_type:'wall_frame', image: '888.png'},
@@ -476,7 +476,7 @@ export class ProductService{
 		      {id: 12, element_name: 'dormer',  width: 4, height: 3.3, option_type:'dormer', image: '888.png'},
 		      {id: 13, element_name: 'D6 Deluxe 9-Lite Single Door',  width: 3.34, height: 6.125, option_type:'door', image: '888.png'},
 		      ]},
-		    { id: 3, styleName: 'left', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1, 
+		    { id: 3, styleName: 'left', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
 		    elemente: [
 		      {id: 0, element_name: 'wall1', width: 10.3, height: 6.375	, option_type:'wall', image: '/assets/images/sonoma/perete_montat.jpg'},
 		      {id: 1, element_name: 'wall_frame', width: 10.5, height: 8, option_type:'wall_frame', image: '888.png'},
@@ -515,7 +515,7 @@ export class ProductService{
 		      {id: 12, element_name: 'dormer',  width: 4, height: 3.3, option_type:'dormer', image: '888.png'},
 		      {id: 13, element_name: 'D6 Deluxe 9-Lite Single Door',  width: 3.34, height: 6.125, option_type:'door', image: '/assets/images/sonoma/888.png'},
 		      ]},
-		  { id: 1, styleName: 'Sonoma', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1, 
+		  { id: 1, styleName: 'Sonoma', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1, 
 		    elemente: [
 		      {id: 0, element_name: 'wall1', width: 13.3, height: 6.375	, option_type:'wall', image: '/assets/images/sonoma/perete_montat.jpg'},
 		      {id: 1, element_name: 'wall_frame', width: 10.5, height: 8, option_type:'wall_frame', image: '888.png'},
@@ -562,7 +562,7 @@ export class ProductService{
 		      {id: 6, element_name: 'dormer',  width: 4, height: 3.3, option_type:'roof', image: '/assets/images/dormer.png'},
 		      {id: 7, element_name: 'door1',  width: 3.446, height: 6.125, option_type:'roof', image: '/assets/images/front_door2.png'},
 		      ]},
-		     { id: 1, styleName: 'Copper Creek', thumbnail: '/assets/images/style_thumbnails/copper-creek.jpg', baseCategory: 1,
+		     { id: 1, styleName: 'Copper Creek', thumbnail: '../assets/images/thumbnails/copperCreek.jpg', baseCategory: 1,
 		    elemente: [
 		      {id: 1, element_name: 'wall1', width: 13.3, height: 8, option_type:'wall', image: '/assets/images/peretelemn.jpg'},
 		      {id: 2, element_name: 'wall_frame', width: 14, height: 8, option_type:'wall_frame', image: '/assets/images/wall_frame.png'},

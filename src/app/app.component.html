@@ -14,7 +14,7 @@
     <div class="">
       <img
         alt="Custom Design Center"
-        src="https://placeholder.com/wp-content/uploads/2018/10/placeholder.com-logo1.jpg"
+        src="../assets/TEMPLOGO.png"
         class="logo"
 		/>
 		<h2 class="title is-3 subTxt" style="margin-top: 0.5em;">{{ selectedConfiguration.style.styleName }}</h2>
@@ -98,7 +98,7 @@
         </h5>
         <div class="options-categories-list">
           <button
-            *ngFor="let category of optionsCategorySlider"
+            *ngFor="let category of optionsCategories "
             (click)="showOptions(category)"
             class="button multiButton is-primary is-outlined is-fullwidth"
           >
@@ -185,7 +185,7 @@
       (onMouseDown)="onCanvasClickDown($event)"
       (onMouseUp)="onCanvasClickUp($event)"
       (onMouseMove)="onCanvasMouseMove($event)"
-      (drop)="droppedOption($event, dragData)"
+      (drop)="droppedOption($event, this.scene)"
       (dragover)="allowDrop($event)"
     ></div>
   </div>

@@ -17,7 +17,7 @@ import { NguCarousel, NguCarouselConfig } from '@ngu/carousel';
   styleUrls: ['./category-slider.css'],
   providers: [NguCarouselConfig]
 })
-export class optionsCategorySlider {
+export class optionsCategories  {
   productStylesOptions: any;
   optionsCategories;
   items;
